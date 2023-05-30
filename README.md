@@ -1,6 +1,6 @@
 # mce.codes
 
-My personal website, built with [Astro](https://astro.build).
+My personal website, built with [Astro](https://astro.build) and deployed on [GitHub Pages](https://pages.github.com).
 
 ## Third-party assets and attributions
 

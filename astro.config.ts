@@ -250,6 +250,7 @@ const generateIdsPlugin: PluginOption = {
 };
 
 export default <AstroUserConfig>{
+  site: "https://mce.codes",
   scopedStyleStrategy: "class",
   experimental: { assets: true },
   integrations: [optimizeImagesIntegration, compress({ img: false })],
