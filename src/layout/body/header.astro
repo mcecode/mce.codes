@@ -1,0 +1,154 @@
+---
+import LogoIcon from "@layout/body/logo-icon.astro";
+import ModeIcon from "@layout/body/mode-icon.astro";
+
+import {
+  logoTitleId,
+  modeButtonId,
+  modeTitleId
+} from "@layout/body/header.ids.ts";
+---
+
+<header>
+  <a class="logo no-decor" href="/" aria-labelledby={logoTitleId}>
+    <LogoIcon>
+      <title id={logoTitleId} slot="title">mce.codes logo</title>
+    </LogoIcon>
+  </a>
+  <a class="about" href="/">About</a>
+  <a class="projects" href="/projects">Projects</a>
+  <button
+    id={modeButtonId}
+    class="mode no-button"
+    aria-labelledby={modeTitleId}
+  >
+    <ModeIcon>
+      <title id={modeTitleId} slot="title"></title>
+    </ModeIcon>
+  </button>
+</header>
+
+<style lang="scss">
+  header {
+    display: grid;
+    grid-template-areas: "mode mode mode" "about logo projects";
+    row-gap: v-size(2);
+    margin-bottom: v-size(10);
+  }
+  a {
+    place-self: center;
+  }
+  .logo {
+    grid-area: logo;
+  }
+  .about {
+    grid-area: about;
+  }
+  .projects {
+    grid-area: projects;
+  }
+  .mode {
+    grid-area: mode;
+    width: fit-content;
+  }
+
+  @include no-js {
+    .mode {
+      display: none;
+    }
+  }
+
+  @include m-small {
+    header {
+      grid-template-areas: "logo about projects mode";
+      column-gap: v-size(5);
+    }
+    a,
+    button {
+      align-self: center;
+    }
+    .logo,
+    .projects {
+      justify-self: start;
+    }
+    .about,
+    .mode {
+      justify-self: end;
+    }
+
+    @include no-js {
+      header {
+        grid-template-areas: "logo about projects";
+        grid-template-columns: 1fr auto auto;
+      }
+      .projects {
+        justify-self: end;
+      }
+    }
+  }
+</style>
+
+<script>
+  import { modeButtonId, modeTitleId } from "@layout/body/header.ids.ts";
+  import { modeChange } from "@lib/events.ts";
+  import { colors } from "@styles/data/colors.json";
+
+  const rootStyle = document.documentElement.style;
+  const modeButton = document.getElementById(modeButtonId) as HTMLButtonElement;
+  const modeTitle = document.getElementById(modeTitleId) as HTMLTitleElement;
+  const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");
+  const storedMode = localStorage.getItem("mode");
+
+  function setModeTitleBasedOnMedia() {
+    if (darkModeMedia.matches) {
+      modeTitle.textContent = "Light mode";
+      return;
+    }
+
+    modeTitle.textContent = "Dark mode";
+  }
+
+  function setMode(mode: string) {
+    // Once the user has set a mode preference, follow that instead of the
+    // system default.
+    darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
+
+    switch (mode) {
+      case "light": {
+        rootStyle.setProperty("--c-foreground", colors.black);
+        rootStyle.setProperty("--c-background", colors.white);
+        rootStyle.setProperty("--c-accent", colors.grayDark);
+
+        modeTitle.textContent = "Dark mode";
+
+        localStorage.setItem("mode", "light");
+        break;
+      }
+      case "dark": {
+        rootStyle.setProperty("--c-foreground", colors.white);
+        rootStyle.setProperty("--c-background", colors.black);
+        rootStyle.setProperty("--c-accent", colors.grayLight);
+
+        modeTitle.textContent = "Light mode";
+
+        localStorage.setItem("mode", "dark");
+        break;
+      }
+    }
+
+    modeChange.dispatch(mode);
+  }
+
+  modeButton.addEventListener("click", () => {
+    setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
+  });
+  darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
+
+  addEventListener("DOMContentLoaded", () => {
+    if (typeof storedMode === "string") {
+      setMode(storedMode);
+    } else {
+      setModeTitleBasedOnMedia();
+    }
+  });
+</script>

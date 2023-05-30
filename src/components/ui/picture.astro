@@ -1,0 +1,35 @@
+---
+type Props = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  class?: string | { picture: string; img: string };
+  format?: string;
+};
+
+let pictureClass;
+let imgClass;
+
+if (typeof Astro.props.class === "string") {
+  pictureClass = Astro.props.class;
+}
+
+if (typeof Astro.props.class === "object") {
+  pictureClass = Astro.props.class.picture;
+  imgClass = Astro.props.class.img;
+}
+
+delete Astro.props.class;
+delete Astro.props.format;
+---
+
+<!-- Formatting needs to be maintained for the integration to work properly. --><!-- prettier-ignore -->
+<picture class={pictureClass}>
+  <!--
+    For some reason TypeScript sees a type error in the 'class' property when
+    there should be none.
+   -->
+  <!-- @ts-expect-error -->
+  <img optimize-image class={imgClass} decoding="async" loading="lazy" {...Astro.props} />
+</picture>

@@ -1,0 +1,25 @@
+<svg width="124" height="104" viewBox="0 0 124 104" fill="none">
+  <slot name="title" />
+  <path
+    d="M121.5 104V4M25.232 94.156l91.924-91.924M59.164 92c-.5 2.5 0 4 3.5 3.874 2.5-.374 2.439-.799 2-3.874"
+  ></path>
+  <path d="M6.768 2.232l91.924 91.924M2.5 104V4"></path>
+</svg>
+
+<style lang="scss">
+  svg {
+    width: v-size(14);
+  }
+
+  @include m-medium {
+    svg {
+      width: v-size(16);
+    }
+  }
+
+  @include m-large {
+    svg {
+      width: v-size(18);
+    }
+  }
+</style>

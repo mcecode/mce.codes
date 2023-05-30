@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro build && astro preview"
+  },
+  "devDependencies": {
+    "@rollup/pluginutils": "^5.0.2",
+    "@types/find-cache-dir": "^3.2.1",
+    "@types/gifsicle": "^5.2.0",
+    "@types/node": "^20.2.3",
+    "astro": "^2.3.4",
+    "astro-compress": "^1.1.44",
+    "estree-walker": "^3.0.3",
+    "find-cache-dir": "^4.0.0",
+    "gifsicle": "^7.0.1",
+    "nanoid": "^4.0.2",
+    "sass": "^1.62.1",
+    "sharp": "^0.32.1"
+  }
+}

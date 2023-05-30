@@ -1,0 +1,48 @@
+@use "sass:list";
+@use "sass:map";
+
+// Colors
+
+@use "json:colors" as *;
+
+@function color($color) {
+  @return map.get($colors, $color);
+}
+
+// Fonts
+
+$_fonts: (
+  "title": (
+    "Raleway",
+    sans-serif
+  ),
+  "body": (
+    "Inter",
+    sans-serif
+  )
+);
+
+@function font($font) {
+  @return map.get($_fonts, $font);
+}
+
+// Sizes
+
+$_sizes: ();
+
+@for $i from 1 through 20 {
+  $_sizes: list.append($_sizes, $i * 0.25);
+}
+
+@for $i from 1 through 20 {
+  $_sizes: list.append($_sizes, list.nth($_sizes, list.length($_sizes)) + 1);
+}
+
+$_units: (
+  "rem": 0rem,
+  "em": 0em
+);
+
+@function size($size, $unit: "rem") {
+  @return list.nth($_sizes, $size) + map.get($_units, $unit);
+}

@@ -1,0 +1,29 @@
+@mixin dark {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (min-width: 28em) {
+    @content;
+  }
+}
+
+@mixin medium {
+  @media (min-width: 37.5em) {
+    @content;
+  }
+}
+
+@mixin large {
+  @media (min-width: 50em) {
+    @content;
+  }
+}
+
+@mixin xlarge {
+  @media (min-width: 62.5em) {
+    @content;
+  }
+}
