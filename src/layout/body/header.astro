@@ -32,6 +32,7 @@ import {
   header {
     display: grid;
     grid-template-areas: "mode mode mode" "about logo projects";
+    grid-template-columns: repeat(3, 1fr);
     row-gap: v-size(2);
     margin-bottom: v-size(10);
   }
@@ -61,6 +62,7 @@ import {
   @include m-small {
     header {
       grid-template-areas: "logo about projects mode";
+      grid-template-columns: repeat(4, auto);
       column-gap: v-size(5);
     }
     a,
