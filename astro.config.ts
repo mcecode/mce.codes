@@ -30,9 +30,15 @@ const optimizeImagesIntegration: AstroIntegration = {
   name: "optimize-images",
   hooks: {
     async "astro:build:done"({ dir, routes }) {
-      type Images = { original: string; webp: string }[];
-      type MatchGroups = { preSrc: string; src: string; postSrc: string };
+      type Images = { original: string; webp: string | string[] }[];
+      type MatchGroups = {
+        resize?: string;
+        preSrc: string;
+        src: string;
+        postSrc: string;
+      };
 
+      const resizeSizes = [1, 1.5, 2, 3, 4];
       const images: Images = [];
 
       for (const route of routes) {
@@ -43,19 +49,30 @@ const optimizeImagesIntegration: AstroIntegration = {
         const htmlPath = nodeUrl.fileURLToPath(route.distURL);
         let html = await fs.readFile(htmlPath, "utf-8");
         const matches = html.matchAll(
-          /<img optimize-image(?<preSrc>.+)src="(?<src>[^"]+)"(?<postSrc>.+)>/g
+          /<img optimize-image (?<resize>resize="true")?(?<preSrc>.+)src="(?<src>[^"]+)"(?<postSrc>.+)>/g
         );
 
         for (const match of matches) {
-          const { preSrc, src, postSrc } = match.groups as MatchGroups;
-          const webp = src.slice(0, src.lastIndexOf(".")) + ".webp";
+          const { resize, preSrc, src, postSrc } = match.groups as MatchGroups;
+          const baseName = src.slice(0, src.lastIndexOf("."));
+          let webp;
+
+          if (resize) {
+            webp = resizeSizes.map((size) => `${baseName}-${size}.webp`);
+          } else {
+            webp = `${baseName}.webp`;
+          }
 
           images.push({ original: src, webp });
 
           html = html.replace(
             match[0],
             `
-              <source srcset="${webp}" type="image/webp">
+              <source srcset="${
+                typeof webp === "string"
+                  ? webp
+                  : webp.map((fileName, i) => `${fileName} ${resizeSizes[i]}x`)
+              }" type="image/webp">
               <img ${preSrc} src="${src}" ${postSrc}>
             `
           );
@@ -71,38 +88,54 @@ const optimizeImagesIntegration: AstroIntegration = {
       }) as string;
       for (let { original, webp } of images) {
         original = path.join(distDir, original);
-        webp = path.join(distDir, webp);
+
+        if (typeof webp === "string") {
+          webp = [path.join(distDir, webp)];
+        } else {
+          webp = webp.map((fileName) => path.join(distDir, fileName));
+        }
 
         const format = path.extname(original).slice(1);
         const image = sharp(original, {
           limitInputPixels: false,
           animated: format === "gif"
         });
+        const { width, height } = await image.metadata();
 
-        const cachedWebp = path.join(cacheDir, path.basename(webp));
-        try {
-          await fs.access(cachedWebp);
-
+        for (let i = 0; i < webp.length; i++) {
+          const cachedWebp = path.join(
+            cacheDir,
+            path.basename(webp[i] as string)
+          );
           try {
-            await fs.copyFile(cachedWebp, webp);
-          } catch {}
-        } catch {
-          // In KB
-          const size = (await fs.stat(original)).size / 1000;
+            await fs.access(cachedWebp);
 
-          await image
-            .clone()
-            .webp({
-              effort: 6,
-              // For some reason, using lossless compression mode on large GIFs
-              // increase their WebP size.
-              lossless:
-                format === "gif" &&
-                // Less than 1MB
-                size < 1000
-            })
-            .toFile(webp);
-          await fs.copyFile(webp, cachedWebp);
+            try {
+              await fs.copyFile(cachedWebp, webp[i] as string);
+            } catch {}
+          } catch {
+            const clone = image.clone();
+
+            if (typeof width === "number" && typeof height === "number") {
+              clone.resize(
+                width * (resizeSizes[i] as number),
+                height * (resizeSizes[i] as number)
+              );
+            }
+
+            await clone
+              .webp({
+                effort: 6,
+                // For some reason, using lossless compression mode on large
+                // GIFs increase their WebP size.
+                lossless:
+                  format === "gif" &&
+                  // Less than 1MB
+                  (await fs.stat(original)).size / 1000 < 1000
+              })
+              .toFile(webp[i] as string);
+            await fs.copyFile(webp[i] as string, cachedWebp);
+          }
         }
 
         const cachedOriginal = path.join(cacheDir, path.basename(original));
