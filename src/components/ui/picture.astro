@@ -24,12 +24,13 @@ delete Astro.props.class;
 delete Astro.props.format;
 ---
 
-<!-- Formatting needs to be maintained for the integration to work properly. --><!-- prettier-ignore -->
+{/* Formatting needs to be maintained for the integration to work properly. */}
+<!-- prettier-ignore -->
 <picture class={pictureClass}>
-  <!--
+  {/*
     For some reason TypeScript sees a type error in the 'class' property when
     there should be none.
-   -->
+  */}
   <!-- @ts-expect-error -->
   <img optimize-image class={imgClass} decoding="async" loading="lazy" {...Astro.props} />
 </picture>
