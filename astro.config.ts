@@ -30,15 +30,18 @@ const optimizeImagesIntegration: AstroIntegration = {
   name: "optimize-images",
   hooks: {
     async "astro:build:done"({ dir, routes }) {
-      type Images = { original: string; webp: string | string[] }[];
+      type Resize = "" | "up" | "down";
+      type Images = { original: string; webp: string[]; resize: Resize }[];
       type MatchGroups = {
-        resize?: string;
+        resize: Resize;
         preSrc: string;
         src: string;
         postSrc: string;
       };
 
-      const resizeSizes = [1, 1.5, 2, 3, 4];
+      const resizeSuffixes = ["a", "b", "c", "d", "e"];
+      const resizeUpMultipliers = [1, 1.5, 2, 3, 4];
+      const resizeDownMultipliers = [0.25, 0.375, 0.5, 0.75, 1];
       const images: Images = [];
 
       for (const route of routes) {
@@ -49,29 +52,33 @@ const optimizeImagesIntegration: AstroIntegration = {
         const htmlPath = nodeUrl.fileURLToPath(route.distURL);
         let html = await fs.readFile(htmlPath, "utf-8");
         const matches = html.matchAll(
-          /<img optimize-image (?<resize>resize="true")?(?<preSrc>.+)src="(?<src>[^"]+)"(?<postSrc>.+)>/g
+          /<img optimize-image resize="(?<resize>[a-z-]*)"(?<preSrc>.+)src="(?<src>[^"]+)"(?<postSrc>.+)>/g
         );
 
         for (const match of matches) {
           const { resize, preSrc, src, postSrc } = match.groups as MatchGroups;
-          const baseName = src.slice(0, src.lastIndexOf("."));
+          const extensionlessPath = src.slice(0, src.lastIndexOf("."));
           let webp;
 
-          if (resize) {
-            webp = resizeSizes.map((size) => `${baseName}-${size}.webp`);
+          if (resize === "") {
+            webp = [`${extensionlessPath}.webp`];
           } else {
-            webp = `${baseName}.webp`;
+            webp = resizeSuffixes.map(
+              (suffix) => `${extensionlessPath}${suffix}.webp`
+            );
           }
 
-          images.push({ original: src, webp });
+          images.push({ original: src, webp, resize });
 
           html = html.replace(
             match[0],
             `
               <source srcset="${
-                typeof webp === "string"
-                  ? webp
-                  : webp.map((fileName, i) => `${fileName} ${resizeSizes[i]}x`)
+                webp.length === 1
+                  ? webp[0]
+                  : webp.map(
+                      (filePath, i) => `${filePath} ${resizeUpMultipliers[i]}x`
+                    )
               }" type="image/webp">
               <img ${preSrc} src="${src}" ${postSrc}>
             `
@@ -86,27 +93,34 @@ const optimizeImagesIntegration: AstroIntegration = {
         name: "astro-optimize-images",
         create: true
       }) as string;
-      for (let { original, webp } of images) {
+      const sharpOptions = { limitInputPixels: false };
+      const imageOptions = {
+        png: { compressionLevel: 9, quality: 80 },
+        webp: { effort: 6 }
+      };
+      for (let { original, webp, resize } of images) {
         original = path.join(distDir, original);
+        webp = webp.map((filePath) => path.join(distDir, filePath));
 
-        if (typeof webp === "string") {
-          webp = [path.join(distDir, webp)];
-        } else {
-          webp = webp.map((fileName) => path.join(distDir, fileName));
-        }
-
-        const format = path.extname(original).slice(1);
+        const format = path.extname(original).slice(1) as "gif" | "png";
         const image = sharp(original, {
-          limitInputPixels: false,
+          ...sharpOptions,
           animated: format === "gif"
         });
-        const { width, height } = await image.metadata();
 
+        const { width, height } = await image.metadata();
+        const multiply =
+          webp.length > 1 &&
+          typeof width === "number" &&
+          typeof height === "number";
+        const multipliers =
+          resize === "up" ? resizeUpMultipliers : resizeDownMultipliers;
         for (let i = 0; i < webp.length; i++) {
           const cachedWebp = path.join(
             cacheDir,
             path.basename(webp[i] as string)
           );
+
           try {
             await fs.access(cachedWebp);
 
@@ -116,24 +130,36 @@ const optimizeImagesIntegration: AstroIntegration = {
           } catch {
             const clone = image.clone();
 
-            if (typeof width === "number" && typeof height === "number") {
+            if (multiply) {
               clone.resize(
-                width * (resizeSizes[i] as number),
-                height * (resizeSizes[i] as number)
+                width * (multipliers[i] as number),
+                height * (multipliers[i] as number)
               );
             }
 
-            await clone
-              .webp({
-                effort: 6,
-                // For some reason, using lossless compression mode on large
-                // GIFs increase their WebP size.
-                lossless:
-                  format === "gif" &&
-                  // Less than 1MB
-                  (await fs.stat(original)).size / 1000 < 1000
-              })
-              .toFile(webp[i] as string);
+            // Compressing images in their original format before converting
+            // them to WebP reduces the WebP file size. GIFs are compressed
+            // using Gifsicle instead of Sharp, so that step is skipped for GIFs
+            // for now.
+            if (format !== "gif") {
+              await sharp(
+                await clone.toFormat(format, imageOptions[format]).toBuffer(),
+                sharpOptions
+              )
+                .webp(imageOptions.webp)
+                .toFile(webp[i] as string);
+            } else {
+              await clone
+                .webp({
+                  ...imageOptions.webp,
+                  // For some reason, using lossless compression mode on large
+                  // GIFs increase their WebP size but reduces the size of
+                  // smaller GIFs, so it is turned on for GIFs smaller than 1MB.
+                  lossless: (await fs.stat(original)).size / 1000 < 1000
+                })
+                .toFile(webp[i] as string);
+            }
+
             await fs.copyFile(webp[i] as string, cachedWebp);
           }
         }
@@ -161,9 +187,7 @@ const optimizeImagesIntegration: AstroIntegration = {
             case "png": {
               await fs.writeFile(
                 original,
-                await image
-                  .png({ compressionLevel: 9, palette: true })
-                  .toBuffer(),
+                await image.png(imageOptions.png).toBuffer(),
                 "binary"
               );
 

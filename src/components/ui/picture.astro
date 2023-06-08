@@ -5,7 +5,7 @@ type Props = {
   height: number;
   alt: string;
   class?: string | { picture: string; img: string };
-  resize?: boolean;
+  resize?: "up" | "down";
   format?: string;
 };
 
@@ -21,7 +21,12 @@ if (typeof Astro.props.class === "object") {
   imgClass = Astro.props.class.img;
 }
 
-const { resize = false } = Astro.props;
+const { resize = "" } = Astro.props;
+
+if (resize === "down") {
+  Astro.props.width = Astro.props.width * 0.25;
+  Astro.props.height = Astro.props.height * 0.25;
+}
 
 delete Astro.props.class;
 delete Astro.props.resize;
@@ -36,5 +41,5 @@ delete Astro.props.format;
     there should be none.
   */}
   <!-- @ts-expect-error -->
-  <img optimize-image resize={resize} class={imgClass} decoding="async" loading="lazy" {...Astro.props} />
+  <img optimize-image resize=`${resize}` class={imgClass} decoding="async" loading="lazy" {...Astro.props} />
 </picture>
