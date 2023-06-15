@@ -1,5 +1,6 @@
 ---
 import ItemCard from "@components/projects/item-card.astro";
+import Heading from "@components/ui/heading.astro";
 import Layout from "@layout/layout.astro";
 
 import eslintConfigMcecodeGif from "@assets/eslint-config-mcecode.gif";
@@ -10,7 +11,7 @@ import pdfMadeEasyGif from "@assets/pdf-made-easy.gif";
 ---
 
 <Layout title="Projects">
-  <h1>Projects</h1>
+  <Heading content="Projects" />
   <ul>
     <ItemCard
       title="PDF Made Easy"
@@ -59,9 +60,3 @@ import pdfMadeEasyGif from "@assets/pdf-made-easy.gif";
     />
   </ul>
 </Layout>
-
-<style lang="scss">
-  h1 {
-    margin-bottom: v-size(5, "em");
-  }
-</style>

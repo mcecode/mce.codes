@@ -1,0 +1,31 @@
+---
+type Props = {
+  content: string | { heading: string; subheading: string };
+};
+
+let heading;
+let subheading;
+
+if (typeof Astro.props.content === "string") {
+  heading = Astro.props.content;
+}
+
+if (typeof Astro.props.content === "object" && Astro.props.content !== null) {
+  heading = Astro.props.content.heading;
+  subheading = Astro.props.content.subheading;
+}
+---
+
+<h1 class:list={{ "no-subheading": typeof subheading !== "string" }}>
+  {heading}
+</h1>
+{typeof subheading === "string" && <p>{subheading}</p>}
+
+<style lang="scss">
+  p {
+    margin-bottom: v-size(8, "em");
+  }
+  .no-subheading {
+    margin-bottom: v-size(5, "em");
+  }
+</style>
