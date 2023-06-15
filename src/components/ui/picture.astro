@@ -16,7 +16,7 @@ if (typeof Astro.props.class === "string") {
   pictureClass = Astro.props.class;
 }
 
-if (typeof Astro.props.class === "object") {
+if (typeof Astro.props.class === "object" && Astro.props.class !== null) {
   pictureClass = Astro.props.class.picture;
   imgClass = Astro.props.class.img;
 }
