@@ -1,0 +1,36 @@
+---
+import Time from "@components/ui/time.astro";
+
+type Props = {
+  title: string;
+  link: string;
+  dateCreated: Date;
+  dateUpdated: Date;
+};
+const { title, link, dateCreated, dateUpdated } = Astro.props;
+---
+
+<li>
+  <p><a href={link}>{title}</a></p>
+  <p class="small-text">
+    Created: <Time date={dateCreated} /> | Updated: <Time date={dateUpdated} />
+  </p>
+</li>
+
+<style lang="scss">
+  li {
+    margin-bottom: v-size(5);
+  }
+  li:last-child {
+    margin-bottom: v-size(15);
+  }
+  p:last-child {
+    font-style: italic;
+  }
+
+  @include m-medium {
+    li:last-child {
+      margin-bottom: v-size(20);
+    }
+  }
+</style>
