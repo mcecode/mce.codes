@@ -120,6 +120,16 @@ path {
   border: none;
   background: inherit;
 }
+.small-text {
+  font-size: v-size(3);
+  color: var(--c-accent);
+}
+
+@include m-medium {
+  .small-text {
+    font-size: v-size(4);
+  }
+}
 
 // Keyframes
 
