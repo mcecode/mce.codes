@@ -124,6 +124,9 @@ path {
   font-size: v-size(3);
   color: var(--c-accent);
 }
+h1.larger-spacing {
+  margin-bottom: v-size(5, "em");
+}
 
 @include m-medium {
   .small-text {
