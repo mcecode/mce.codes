@@ -1,0 +1,11 @@
+article {
+  h2 {
+    font-weight: 500;
+  }
+  ul {
+    margin-bottom: v-size(8, "em");
+  }
+  li {
+    list-style: circle inside;
+  }
+}

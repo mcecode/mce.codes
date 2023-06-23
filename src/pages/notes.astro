@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+
+import PostItem from "@components/ui/post-item.astro";
+import Layout from "@layout/layout.astro";
+
+const notes = await getCollection("notes");
+---
+
+<Layout title="Notes">
+  <h1 class="smaller-spacing">Notes</h1>
+  <p class="larger-spacing">
+    Short notes, reminders, or checklists for myself that might also be useful
+    to you
+  </p>
+  <ul>
+    {
+      notes
+        .sort(
+          (a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime()
+        )
+        .map(({ slug, data: { title, dateCreated, dateUpdated } }) => (
+          <PostItem
+            {title}
+            {dateCreated}
+            {dateUpdated}
+            link={`/notes/${slug}`}
+          />
+        ))
+    }
+  </ul>
+</Layout>

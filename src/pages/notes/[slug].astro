@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import { getCollection } from "astro:content";
+
+import Time from "@components/ui/time.astro";
+import Article from "@layout/article.astro";
+import Layout from "@layout/layout.astro";
+
+export async function getStaticPaths() {
+  return (await getCollection("notes")).map((note) => ({
+    params: { slug: note.slug },
+    props: { note }
+  }));
+}
+
+type Props = { note: CollectionEntry<"notes"> };
+const { note } = Astro.props;
+const { Content } = await note.render();
+---
+
+<Layout title={note.data.title}>
+  <Article>
+    <h1 class="smaller-spacing">{note.data.title}</h1>
+    <p class="small-text larger-spacing">
+      Created: <Time date={note.data.dateCreated} /> | Updated:
+      <Time date={note.data.dateUpdated} />
+    </p>
+    <Content />
+  </Article>
+</Layout>

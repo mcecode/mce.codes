@@ -127,6 +127,12 @@ path {
 h1.larger-spacing {
   margin-bottom: v-size(5, "em");
 }
+h1.smaller-spacing {
+  margin-bottom: v-size(1, "em");
+}
+p.larger-spacing {
+  margin-bottom: v-size(8, "em");
+}
 
 @include m-medium {
   .small-text {
