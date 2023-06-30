@@ -28,9 +28,7 @@ const { title } = Astro.props;
     <Footer />
 
     <script>
-      (document.querySelector("html") as HTMLHtmlElement).classList.remove(
-        "no-js"
-      );
+      document.documentElement.className = "js";
     </script>
   </body>
 </html>

@@ -85,6 +85,9 @@ path {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+template {
+  display: none;
+}
 
 @include m-small {
   body {
@@ -140,7 +143,14 @@ p.larger-spacing {
   }
 }
 
-// Keyframes
+// Animations
+
+.rotate-appear {
+  animation: 250ms ease-in-out forwards rotate-appear;
+}
+.rotate-vanish {
+  animation: 250ms ease-in-out reverse forwards rotate-appear;
+}
 
 @keyframes rotate-appear {
   from {

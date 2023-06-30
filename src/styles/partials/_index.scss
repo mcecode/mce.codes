@@ -2,7 +2,13 @@
 @forward "variables" as v-*;
 
 @mixin no-js {
-  html.no-js {
+  .no-js {
+    @content;
+  }
+}
+
+@mixin with-js {
+  .js {
     @content;
   }
 }
