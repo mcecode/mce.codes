@@ -148,43 +148,6 @@ import {
     modeTitle.textContent = "Dark mode";
   }
 
-  function setMode(mode: Mode, animateModeSvg = true) {
-    // Once the user has set a mode preference, follow that instead of the
-    // system default.
-    darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
-
-    switch (mode) {
-      case "light": {
-        rootStyle.setProperty("--c-foreground", colors.black);
-        rootStyle.setProperty("--c-background", colors.white);
-        rootStyle.setProperty("--c-accent", colors.grayDark);
-
-        if (animateModeSvg) {
-          modeMoon.classList.add("rotate-appear");
-          modeSun.classList.add("rotate-vanish");
-        }
-
-        modeTitle.textContent = "Dark mode";
-        localStorage.setItem("mode", "light");
-        break;
-      }
-      case "dark": {
-        rootStyle.setProperty("--c-foreground", colors.white);
-        rootStyle.setProperty("--c-background", colors.black);
-        rootStyle.setProperty("--c-accent", colors.grayLight);
-
-        if (animateModeSvg) {
-          modeMoon.classList.add("rotate-vanish");
-          modeSun.classList.add("rotate-appear");
-        }
-
-        modeTitle.textContent = "Light mode";
-        localStorage.setItem("mode", "dark");
-        break;
-      }
-    }
-  }
-
   function resetModeSvgState(mode: Mode) {
     switch (mode) {
       case "light": {
@@ -205,10 +168,51 @@ import {
     modeSun.classList.remove("rotate-vanish");
   }
 
+  let isSetModeFirstRun = true;
+  function setMode(mode: Mode) {
+    switch (mode) {
+      case "light": {
+        rootStyle.setProperty("--c-foreground", colors.black);
+        rootStyle.setProperty("--c-background", colors.white);
+        rootStyle.setProperty("--c-accent", colors.grayDark);
+
+        if (!isSetModeFirstRun) {
+          modeMoon.classList.add("rotate-appear");
+          modeSun.classList.add("rotate-vanish");
+        }
+
+        modeTitle.textContent = "Dark mode";
+        localStorage.setItem("mode", "light");
+        break;
+      }
+      case "dark": {
+        rootStyle.setProperty("--c-foreground", colors.white);
+        rootStyle.setProperty("--c-background", colors.black);
+        rootStyle.setProperty("--c-accent", colors.grayLight);
+
+        if (!isSetModeFirstRun) {
+          modeMoon.classList.add("rotate-vanish");
+          modeSun.classList.add("rotate-appear");
+        }
+
+        modeTitle.textContent = "Light mode";
+        localStorage.setItem("mode", "dark");
+        break;
+      }
+    }
+
+    if (isSetModeFirstRun) {
+      // Once the user has set a mode preference, follow that instead of the
+      // system default.
+      darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
+      // On initial load, shows the moon on the mode button for light mode.
+      resetModeSvgState(mode);
+
+      isSetModeFirstRun = false;
+    }
+  }
+
   darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
-  modeButton.addEventListener("click", () => {
-    setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
-  });
   // Mode moon and sun animations end at the same time so put 'animationend'
   // handling on only one of them.
   modeMoon.addEventListener("animationend", () => {
@@ -217,6 +221,9 @@ import {
     if (typeof storedMode !== "undefined") {
       resetModeSvgState(storedMode);
     }
+  });
+  modeButton.addEventListener("click", () => {
+    setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
   });
 
   addEventListener("DOMContentLoaded", () => {
@@ -227,8 +234,6 @@ import {
       return;
     }
 
-    // Do not animate mode SVG on the first run, it is already in the correct
-    // state.
-    setMode(storedMode, false);
+    setMode(storedMode);
   });
 </script>
