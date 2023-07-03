@@ -1,13 +1,13 @@
 ---
 import { getCollection } from "astro:content";
 
-import PostItem from "@components/ui/post-item.astro";
-import Layout from "@layout/layout.astro";
+import PostItem from "@components/post-item.astro";
+import Page from "@layout/page.astro";
 
 const notes = await getCollection("notes");
 ---
 
-<Layout title="Notes">
+<Page title="Notes">
   <h1 class="smaller-spacing">Notes</h1>
   <p class="larger-spacing">
     Short notes, reminders, or checklists for myself that might also be useful
@@ -29,4 +29,4 @@ const notes = await getCollection("notes");
         ))
     }
   </ul>
-</Layout>
+</Page>

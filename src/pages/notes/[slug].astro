@@ -3,9 +3,9 @@ import type { CollectionEntry } from "astro:content";
 
 import { getCollection } from "astro:content";
 
-import Time from "@components/ui/time.astro";
+import Time from "@components/time.astro";
 import Article from "@layout/article.astro";
-import Layout from "@layout/layout.astro";
+import Page from "@layout/page.astro";
 
 export async function getStaticPaths() {
   return (await getCollection("notes")).map((note) => ({
@@ -19,7 +19,7 @@ const { note } = Astro.props;
 const { Content } = await note.render();
 ---
 
-<Layout title={note.data.title}>
+<Page title={note.data.title}>
   <Article>
     <h1 class="smaller-spacing">{note.data.title}</h1>
     <p class="small-text larger-spacing">
@@ -28,4 +28,4 @@ const { Content } = await note.render();
     </p>
     <Content />
   </Article>
-</Layout>
+</Page>
