@@ -139,6 +139,7 @@ import {
   ) as unknown as SVGGElement;
   const modeSun = document.getElementById(modeSunId) as unknown as SVGGElement;
 
+  darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
   function setModeTitleBasedOnMedia() {
     if (darkModeMedia.matches) {
       modeTitle.textContent = "Light mode";
@@ -148,8 +149,62 @@ import {
     modeTitle.textContent = "Dark mode";
   }
 
-  function resetModeSvgState(mode: Mode) {
+  modeButton.addEventListener("click", () => {
+    setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
+  });
+  function setMode(mode: Mode, animateModeSvg = true) {
     switch (mode) {
+      case "light": {
+        rootStyle.setProperty("--c-foreground", colors.black);
+        rootStyle.setProperty("--c-background", colors.white);
+        rootStyle.setProperty("--c-accent", colors.grayDark);
+
+        if (animateModeSvg) {
+          modeMoon.classList.add("rotate-appear");
+          modeSun.classList.add("rotate-vanish");
+        } else {
+          modeMoon.style.opacity = "1";
+          modeSun.style.opacity = "0";
+        }
+
+        modeTitle.textContent = "Dark mode";
+        localStorage.setItem("mode", "light");
+        break;
+      }
+      case "dark": {
+        rootStyle.setProperty("--c-foreground", colors.white);
+        rootStyle.setProperty("--c-background", colors.black);
+        rootStyle.setProperty("--c-accent", colors.grayLight);
+
+        if (animateModeSvg) {
+          modeMoon.classList.add("rotate-vanish");
+          modeSun.classList.add("rotate-appear");
+        } else {
+          modeMoon.style.opacity = "0";
+          modeSun.style.opacity = "1";
+        }
+
+        modeTitle.textContent = "Light mode";
+        localStorage.setItem("mode", "dark");
+        break;
+      }
+    }
+
+    // Once the user has set a mode preference, follow that instead of the
+    // system default.
+    darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
+  }
+
+  // Mode moon and sun animations end at the same time so put 'animationend'
+  // handling on only one of them.
+  modeMoon.addEventListener("animationend", () => {
+    const storedMode = localStorage.getItem("mode") as Mode | null;
+
+    if (storedMode === null) {
+      return;
+    }
+
+    switch (storedMode) {
       case "light": {
         modeMoon.style.opacity = "1";
         modeSun.style.opacity = "0";
@@ -166,74 +221,16 @@ import {
     modeMoon.classList.remove("rotate-vanish");
     modeSun.classList.remove("rotate-appear");
     modeSun.classList.remove("rotate-vanish");
-  }
-
-  let isSetModeFirstRun = true;
-  function setMode(mode: Mode) {
-    switch (mode) {
-      case "light": {
-        rootStyle.setProperty("--c-foreground", colors.black);
-        rootStyle.setProperty("--c-background", colors.white);
-        rootStyle.setProperty("--c-accent", colors.grayDark);
-
-        if (!isSetModeFirstRun) {
-          modeMoon.classList.add("rotate-appear");
-          modeSun.classList.add("rotate-vanish");
-        }
-
-        modeTitle.textContent = "Dark mode";
-        localStorage.setItem("mode", "light");
-        break;
-      }
-      case "dark": {
-        rootStyle.setProperty("--c-foreground", colors.white);
-        rootStyle.setProperty("--c-background", colors.black);
-        rootStyle.setProperty("--c-accent", colors.grayLight);
-
-        if (!isSetModeFirstRun) {
-          modeMoon.classList.add("rotate-vanish");
-          modeSun.classList.add("rotate-appear");
-        }
-
-        modeTitle.textContent = "Light mode";
-        localStorage.setItem("mode", "dark");
-        break;
-      }
-    }
-
-    if (isSetModeFirstRun) {
-      // Once the user has set a mode preference, follow that instead of the
-      // system default.
-      darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
-      // On initial load, shows the moon on the mode button for light mode.
-      resetModeSvgState(mode);
-
-      isSetModeFirstRun = false;
-    }
-  }
-
-  darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
-  // Mode moon and sun animations end at the same time so put 'animationend'
-  // handling on only one of them.
-  modeMoon.addEventListener("animationend", () => {
-    const storedMode = localStorage.getItem("mode") as Mode | undefined;
-
-    if (typeof storedMode !== "undefined") {
-      resetModeSvgState(storedMode);
-    }
-  });
-  modeButton.addEventListener("click", () => {
-    setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
   });
 
   addEventListener("DOMContentLoaded", () => {
-    const storedMode = localStorage.getItem("mode") as Mode | undefined;
+    const storedMode = localStorage.getItem("mode") as Mode | null;
 
-    if (typeof storedMode === "undefined") {
+    if (storedMode === null) {
       setModeTitleBasedOnMedia();
       return;
     }
 
-    setMode(storedMode);
+    setMode(storedMode, false);
   });
 </script>
