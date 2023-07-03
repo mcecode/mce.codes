@@ -1,5 +1,5 @@
 ---
-import Time from "@components/time.astro";
+import CreatedUpdatedTime from "./created-updated-time.astro";
 
 type Props = {
   title: string;
@@ -12,9 +12,11 @@ const { title, link, dateCreated, dateUpdated } = Astro.props;
 
 <li>
   <p><a href={link}>{title}</a></p>
-  <p class="small-text">
-    Created: <Time date={dateCreated} /> | Updated: <Time date={dateUpdated} />
-  </p>
+  <CreatedUpdatedTime
+    class="small-text"
+    created={dateCreated}
+    updated={dateUpdated}
+  />
 </li>
 
 <style lang="scss">

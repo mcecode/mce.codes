@@ -1,0 +1,10 @@
+---
+import Time from "@components/time.astro";
+
+type Props = { created: Date; updated: Date; class?: string };
+const { created, updated, class: className } = Astro.props;
+---
+
+<p class={className}>
+  Created: <Time date={created} /> | Updated: <Time date={updated} />
+</p>

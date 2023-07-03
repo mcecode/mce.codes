@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 
 import { getCollection } from "astro:content";
 
-import Time from "@components/time.astro";
+import CreatedUpdatedTime from "@components/created-updated-time.astro";
 import Article from "@layout/article.astro";
 import Page from "@layout/page.astro";
 
@@ -17,15 +17,17 @@ export async function getStaticPaths() {
 type Props = { note: CollectionEntry<"notes"> };
 const { note } = Astro.props;
 const { Content } = await note.render();
+const { title, dateCreated, dateUpdated } = note.data;
 ---
 
-<Page title={note.data.title}>
+<Page title={title}>
   <Article>
-    <h1 class="smaller-spacing">{note.data.title}</h1>
-    <p class="small-text larger-spacing">
-      Created: <Time date={note.data.dateCreated} /> | Updated:
-      <Time date={note.data.dateUpdated} />
-    </p>
+    <h1 class="smaller-spacing">{title}</h1>
+    <CreatedUpdatedTime
+      class="small-text larger-spacing"
+      created={dateCreated}
+      updated={dateUpdated}
+    />
     <Content />
   </Article>
 </Page>
