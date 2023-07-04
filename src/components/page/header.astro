@@ -105,6 +105,7 @@ import {
     navId,
     navListId
   } from "@components/page/header.ids";
+  import Store from "@lib/store.ts";
   import { colors } from "@styles/data/colors.json";
 
   const header = document.getElementById(headerId) as HTMLElement;
@@ -127,17 +128,21 @@ import {
     modeButton.classList.toggle("open-nav");
   });
 
-  type Mode = "light" | "dark";
-
   const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");
   const rootStyle = document.documentElement.style;
   const modeTitle = document.getElementById(modeTitleId) as HTMLTitleElement & {
-    textContent: "Light mode" | "Dark mode" | null;
+    // This type is a bit inaccurate because it could also be 'null', but either
+    // 'setModeTitleBasedOnMedia' or 'setMode' are called right away at page
+    // load, so this type is accurate enough.
+    textContent: "Light mode" | "Dark mode";
   };
   const modeMoon = document.getElementById(
     modeMoonId
   ) as unknown as SVGGElement;
   const modeSun = document.getElementById(modeSunId) as unknown as SVGGElement;
+
+  type Mode = "light" | "dark";
+  const modeStore = new Store<Mode>("mode");
 
   darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
   function setModeTitleBasedOnMedia() {
@@ -168,7 +173,7 @@ import {
         }
 
         modeTitle.textContent = "Dark mode";
-        localStorage.setItem("mode", "light");
+        modeStore.set("light");
         break;
       }
       case "dark": {
@@ -185,7 +190,7 @@ import {
         }
 
         modeTitle.textContent = "Light mode";
-        localStorage.setItem("mode", "dark");
+        modeStore.set("dark");
         break;
       }
     }
@@ -198,7 +203,7 @@ import {
   // Mode moon and sun animations end at the same time so put 'animationend'
   // handling on only one of them.
   modeMoon.addEventListener("animationend", () => {
-    const storedMode = localStorage.getItem("mode") as Mode | null;
+    const storedMode = modeStore.get();
 
     if (storedMode === null) {
       return;
@@ -208,29 +213,31 @@ import {
       case "light": {
         modeMoon.style.opacity = "1";
         modeSun.style.opacity = "0";
+
+        modeMoon.classList.remove("rotate-appear");
+        modeSun.classList.remove("rotate-vanish");
         break;
       }
       case "dark": {
         modeMoon.style.opacity = "0";
         modeSun.style.opacity = "1";
+
+        modeMoon.classList.remove("rotate-vanish");
+        modeSun.classList.remove("rotate-appear");
         break;
       }
     }
-
-    modeMoon.classList.remove("rotate-appear");
-    modeMoon.classList.remove("rotate-vanish");
-    modeSun.classList.remove("rotate-appear");
-    modeSun.classList.remove("rotate-vanish");
   });
 
   addEventListener("DOMContentLoaded", () => {
-    const storedMode = localStorage.getItem("mode") as Mode | null;
+    const storedMode = modeStore.get();
 
     if (storedMode === null) {
       setModeTitleBasedOnMedia();
       return;
     }
 
+    // Mode SVG should not animate at initial page load.
     setMode(storedMode, false);
   });
 </script>
