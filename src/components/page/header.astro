@@ -121,11 +121,14 @@ import {
   const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement;
   const modeButton = document.getElementById(modeButtonId) as HTMLButtonElement;
 
+  menuButton.classList.add("transition-transform");
   menuButton.addEventListener("click", () => {
     document.body.classList.toggle("open-nav");
     header.classList.toggle("open-nav");
     navList.classList.toggle("open-nav");
     modeButton.classList.toggle("open-nav");
+
+    menuButton.classList.toggle("rotate-left");
   });
 
   const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");

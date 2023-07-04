@@ -41,7 +41,7 @@
     gap: v-size(5);
     justify-items: center;
     margin-bottom: v-size(10);
-    overflow: auto;
+    overflow: hidden auto;
   }
   .logo {
     justify-self: start;

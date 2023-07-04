@@ -145,6 +145,9 @@ p.larger-spacing {
 
 // Animations
 
+.rotate-left {
+  transform: rotateZ(-90deg);
+}
 .rotate-appear {
   animation: 0ms ease-in-out forwards rotate-appear;
 }
@@ -153,9 +156,10 @@ p.larger-spacing {
 }
 
 @include m-motion {
-  .rotate-appear {
-    animation-duration: 250ms;
+  .transition-transform {
+    transition: transform 250ms ease-in-out;
   }
+  .rotate-appear,
   .rotate-vanish {
     animation-duration: 250ms;
   }
