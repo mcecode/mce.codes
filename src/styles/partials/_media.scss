@@ -4,6 +4,12 @@
   }
 }
 
+@mixin motion {
+  @media (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
 @mixin small {
   @media (min-width: 28em) {
     @content;

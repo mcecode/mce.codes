@@ -146,10 +146,19 @@ p.larger-spacing {
 // Animations
 
 .rotate-appear {
-  animation: 250ms ease-in-out forwards rotate-appear;
+  animation: 0ms ease-in-out forwards rotate-appear;
 }
 .rotate-vanish {
-  animation: 250ms ease-in-out reverse forwards rotate-appear;
+  animation: 0ms ease-in-out reverse forwards rotate-appear;
+}
+
+@include m-motion {
+  .rotate-appear {
+    animation-duration: 250ms;
+  }
+  .rotate-vanish {
+    animation-duration: 250ms;
+  }
 }
 
 @keyframes rotate-appear {
