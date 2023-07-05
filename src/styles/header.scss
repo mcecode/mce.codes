@@ -47,8 +47,9 @@
     display: grid;
     gap: v-size(5);
     justify-items: center;
+    height: v-size(14);
     margin-bottom: v-size(10);
-    overflow: hidden auto;
+    overflow: hidden;
   }
   .logo {
     justify-self: start;
@@ -87,10 +88,17 @@
     display: block;
   }
 
+  @include m-motion {
+    .header {
+      transition: height 250ms ease-in-out;
+    }
+  }
+
   // NOTE: Change to 'm-large' when more nav items are added
   @include m-medium {
     .header {
       grid-template-columns: 1fr 2fr 1fr;
+      height: 100%;
     }
     .menu {
       display: none;

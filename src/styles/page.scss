@@ -148,6 +148,12 @@ p.larger-spacing {
 .rotate-left {
   transform: rotateZ(-90deg);
 }
+.appear {
+  animation: 0ms ease-in-out forwards appear;
+}
+.vanish {
+  animation: 0ms ease-in-out reverse forwards appear;
+}
 .rotate-appear {
   animation: 0ms ease-in-out forwards rotate-appear;
 }
@@ -159,12 +165,22 @@ p.larger-spacing {
   .transition-transform {
     transition: transform 250ms ease-in-out;
   }
+  .appear,
+  .vanish,
   .rotate-appear,
   .rotate-vanish {
     animation-duration: 250ms;
   }
 }
 
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 @keyframes rotate-appear {
   from {
     opacity: 0;

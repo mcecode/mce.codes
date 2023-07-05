@@ -37,7 +37,7 @@ import {
     <template id={menuTemplateId}>
       <button
         id={menuButtonId}
-        class="menu no-button"
+        class="menu no-button transition-transform"
         aria-labelledby={menuTitleId}
       >
         <svg
@@ -121,14 +121,42 @@ import {
   const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement;
   const modeButton = document.getElementById(modeButtonId) as HTMLButtonElement;
 
-  menuButton.classList.add("transition-transform");
   menuButton.addEventListener("click", () => {
     document.body.classList.toggle("open-nav");
     header.classList.toggle("open-nav");
-    navList.classList.toggle("open-nav");
-    modeButton.classList.toggle("open-nav");
-
     menuButton.classList.toggle("rotate-left");
+
+    navList.classList.toggle("appear");
+    modeButton.classList.toggle("appear");
+
+    if (navList.classList.contains("appear")) {
+      navList.classList.add("open-nav");
+      modeButton.classList.add("open-nav");
+    } else {
+      // This prevents a scrollbar from appearing while the header expands and
+      // contracts.
+      header.style.overflowY = "hidden";
+
+      // 'setTimeout' is needed because removing 'appear' and adding 'vanish'
+      // at the same time negates the 'vanish' animation.
+      setTimeout(() => {
+        navList.classList.add("vanish");
+        modeButton.classList.add("vanish");
+      });
+    }
+  });
+
+  // 'navList' and 'modeButton' animations end at the same time so put
+  // 'animationend' handling on only one of them.
+  navList.addEventListener("animationend", ({ target }) => {
+    if ((target as HTMLUListElement).classList.contains("appear")) {
+      header.style.overflowY = "auto";
+    } else {
+      navList.classList.remove("open-nav");
+      modeButton.classList.remove("open-nav");
+      navList.classList.remove("vanish");
+      modeButton.classList.remove("vanish");
+    }
   });
 
   const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");
@@ -203,8 +231,8 @@ import {
     darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
   }
 
-  // Mode moon and sun animations end at the same time so put 'animationend'
-  // handling on only one of them.
+  // 'modeMoon' and 'modeSun' animations end at the same time so put
+  // 'animationend' handling on only one of them.
   modeMoon.addEventListener("animationend", () => {
     const storedMode = modeStore.get();
 
@@ -240,7 +268,7 @@ import {
       return;
     }
 
-    // Mode SVG should not animate at initial page load.
+    // 'modeMoon' and 'modeSun' should not animate at initial page load.
     setMode(storedMode, false);
   });
 </script>
