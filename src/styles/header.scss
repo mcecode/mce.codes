@@ -11,10 +11,17 @@
   .nav-list {
     display: flex;
     flex-wrap: wrap;
-    gap: v-size(4);
     justify-content: center;
     align-items: center;
     height: 100%;
+    width: 100%;
+  }
+  // The use of lobotomized owls instead of 'gap' on 'nav-list' is intentional
+  // as these styles mostly take effect on older browsers where 'gap' is not
+  // supported on Flexbox containers. On smaller screens, the alignment is not
+  // as good as using 'gap', but it will do.
+  .nav-list > * + * {
+    margin-left: v-size(4);
   }
 
   // NOTE: Change to 'm-large' when more nav items are added
@@ -26,8 +33,8 @@
     .logo {
       justify-self: start;
     }
-    .nav-list {
-      gap: v-size(6);
+    .nav-list > * + * {
+      margin-left: v-size(6);
     }
   }
 }
