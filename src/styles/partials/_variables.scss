@@ -1,5 +1,4 @@
 @use "sass:list";
-@use "sass:map";
 
 @use "lib";
 
@@ -8,7 +7,7 @@
 @use "json:colors" as *;
 
 @function color($color) {
-  @return map.get($colors, $color);
+  @return lib.deep-get($colors, $color);
 }
 
 // Fonts
@@ -25,7 +24,7 @@ $_fonts: (
 );
 
 @function font($font) {
-  @return map.get($_fonts, $font);
+  @return lib.deep-get($_fonts, $font);
 }
 
 // Sizes
@@ -46,7 +45,7 @@ $_units: (
 );
 
 @function size($size, $unit: "rem") {
-  @return list.nth($_sizes, $size) + map.get($_units, $unit);
+  @return list.nth($_sizes, $size) + lib.deep-get($_units, $unit);
 }
 
 // Constants
