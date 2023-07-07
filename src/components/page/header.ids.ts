@@ -1,5 +1,6 @@
 export const headerId = "";
 
+export const logoId = "";
 export const logoTitleId = "";
 
 export const navId = "";

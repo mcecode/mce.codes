@@ -3,6 +3,7 @@ import "@styles/header.scss";
 
 import {
   headerId,
+  logoId,
   logoTitleId,
   menuButtonId,
   menuTemplateId,
@@ -18,7 +19,7 @@ import {
 ---
 
 <header id={headerId} class="header no-decor">
-  <a class="logo" href="/" aria-labelledby={logoTitleId}>
+  <a id={logoId} class="logo" href="/" aria-labelledby={logoTitleId}>
     <svg
       class="logo-svg"
       width="124"
@@ -95,6 +96,7 @@ import {
 <script>
   import {
     headerId,
+    logoId,
     menuButtonId,
     menuTemplateId,
     modeButtonId,
@@ -105,6 +107,7 @@ import {
     navId,
     navListId
   } from "@components/page/header.ids";
+  import FocusTrap from "@lib/focus-trap";
   import Store from "@lib/store.ts";
   import { colors } from "@styles/data/colors.json";
 
@@ -117,9 +120,11 @@ import {
     (document.getElementById(menuTemplateId) as HTMLTemplateElement).content
   );
 
+  const logo = document.getElementById(logoId) as HTMLAnchorElement;
   const navList = document.getElementById(navListId) as HTMLUListElement;
   const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement;
   const modeButton = document.getElementById(modeButtonId) as HTMLButtonElement;
+  const headerFocusTrap = new FocusTrap(header, logo, modeButton);
 
   menuButton.addEventListener("click", () => {
     document.body.classList.toggle("open-nav");
@@ -144,6 +149,8 @@ import {
         modeButton.classList.add("vanish");
       });
     }
+
+    headerFocusTrap.toggleLock();
   });
 
   // 'navList' and 'modeButton' animations end at the same time so put
