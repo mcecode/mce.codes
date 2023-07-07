@@ -1,3 +1,7 @@
+// Variables
+
+$initialLogoMenuWidth: v-size(14);
+
 // No JS layout
 
 @include no-js {
@@ -6,7 +10,7 @@
     gap: v-size(2);
     justify-items: center;
     width: 100%;
-    margin: v-size(2) auto v-size(10);
+    margin: v-size(2) auto v-const("section_spacing.small");
   }
   .nav-list {
     display: flex;
@@ -47,8 +51,8 @@
     display: grid;
     gap: v-size(5);
     justify-items: center;
-    height: v-size(14);
-    margin-bottom: v-size(10);
+    height: $initialLogoMenuWidth;
+    margin-bottom: v-const("section_spacing.small");
     overflow: hidden;
   }
   .logo {
@@ -132,7 +136,7 @@
 
 .logo-svg,
 .menu-svg {
-  width: v-size(14);
+  width: $initialLogoMenuWidth;
 }
 .logo-svg {
   --svg-stroke-width: 6;
@@ -164,7 +168,7 @@
   }
 }
 
-// Mode groups
+// Mode groups opacity
 
 .mode-moon {
   opacity: 1;

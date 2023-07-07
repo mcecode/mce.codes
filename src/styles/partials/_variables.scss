@@ -1,6 +1,8 @@
 @use "sass:list";
 @use "sass:map";
 
+@use "lib";
+
 // Colors
 
 @use "json:colors" as *;
@@ -45,4 +47,19 @@ $_units: (
 
 @function size($size, $unit: "rem") {
   @return list.nth($_sizes, $size) + map.get($_units, $unit);
+}
+
+// Constants
+
+$_consts: (
+  "section_spacing": (
+    "xsmall": size(5),
+    "small": size(10),
+    "medium": size(15),
+    "large": size(20)
+  )
+);
+
+@function const($const) {
+  @return lib.deep-get($_consts, $const);
 }

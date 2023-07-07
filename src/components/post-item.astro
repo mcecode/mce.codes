@@ -21,10 +21,10 @@ const { title, link, dateCreated, dateUpdated } = Astro.props;
 
 <style lang="scss">
   li {
-    margin-bottom: v-size(5);
+    margin-bottom: v-const("section_spacing.xsmall");
   }
   li:last-child {
-    margin-bottom: v-size(15);
+    margin-bottom: v-const("section_spacing.medium");
   }
   p:last-child {
     font-style: italic;
@@ -32,7 +32,7 @@ const { title, link, dateCreated, dateUpdated } = Astro.props;
 
   @include m-medium {
     li:last-child {
-      margin-bottom: v-size(20);
+      margin-bottom: v-const("section_spacing.large");
     }
   }
 </style>

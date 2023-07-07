@@ -15,7 +15,7 @@ import avatarPng from "@assets/avatar.png";
     display: grid;
     grid-template-areas: "avatar" "title" "subtitle";
     gap: v-size(2);
-    margin-bottom: v-size(16);
+    margin-bottom: v-const("section_spacing.medium");
     text-align: center;
   }
   picture {
@@ -35,7 +35,7 @@ import avatarPng from "@assets/avatar.png";
     section {
       grid-template-areas: "avatar title" "avatar subtitle";
       column-gap: v-size(10);
-      margin-bottom: v-size(20);
+      margin-bottom: v-const("section_spacing.large");
       text-align: left;
     }
     h1 {

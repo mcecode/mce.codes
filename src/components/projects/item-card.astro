@@ -27,11 +27,11 @@ if ((image.width / image.height).toFixed(2) !== "1.78") {
   li {
     display: grid;
     row-gap: v-size(2);
-    margin-bottom: v-size(10);
+    margin-bottom: v-const("section_spacing.small");
     text-align: center;
   }
   li:where(:last-child) {
-    margin-bottom: v-size(16);
+    margin-bottom: v-const("section_spacing.medium");
   }
   li:not(:last-child)::after {
     content: "";
@@ -51,7 +51,7 @@ if ((image.width / image.height).toFixed(2) !== "1.78") {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto auto 1fr;
       column-gap: v-size(5);
-      margin-bottom: v-size(20);
+      margin-bottom: v-const("section_spacing.large");
       text-align: left;
     }
     li::after {

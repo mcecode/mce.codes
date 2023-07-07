@@ -1,0 +1,16 @@
+@use "sass:map";
+@use "sass:string";
+
+@function deep-get($map, $key) {
+  $value: $map;
+
+  @each $part in string.split($key, ".") {
+    $value: map.get($value, $part);
+
+    @if $value == null {
+      @error "Unknown key '#{$part}'";
+    }
+  }
+
+  @return $value;
+}
