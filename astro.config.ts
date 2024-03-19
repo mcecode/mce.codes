@@ -272,7 +272,6 @@ const generateIdsPlugin: PluginOption = {
 
     const data = {};
 
-    // @ts-expect-error
     walk(this.parse(code), {
       enter(node, parent) {
         if (
@@ -309,7 +308,8 @@ const generateIdsPlugin: PluginOption = {
 export default <AstroUserConfig>{
   site: "https://mce.codes",
   scopedStyleStrategy: "class",
-  experimental: { assets: true },
-  integrations: [optimizeImagesIntegration, compress({ img: false })],
+  compressHTML: false,
+  integrations: [optimizeImagesIntegration, compress({ Image: false })],
+  server: { host: true, port: 6001 },
   vite: { css: { preprocessorOptions: { scss } }, plugins: [generateIdsPlugin] }
 };
