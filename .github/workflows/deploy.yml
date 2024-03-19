@@ -10,22 +10,26 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository using Git
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Cache images
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules/.cache/astro-optimize-images
           key: image-cache-${{ runner.os }}-${{ hashFiles('**/src/assets/**') }}
           restore-keys: image-cache-${{ runner.os }}-
-      - name: Install, build, and upload website
-        uses: withastro/action@v0
+      - name: Install dependencies and build and upload website
+        uses: withastro/action@v2
         with:
-          node-version: 20
+          node-version: lts/*
 
   deploy:
     needs: build
@@ -34,6 +38,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy website
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
