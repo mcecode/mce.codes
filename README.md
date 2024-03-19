@@ -4,8 +4,8 @@ My personal website, built with [Astro](https://astro.build) and deployed on [Gi
 
 ## Third-party assets and attributions
 
-- [Inter](https://rsms.me/inter) ([1](public/fonts/inter-v12-latin-400.woff2), [2](public/fonts/inter-v12-latin-500.woff2)) is licensed under the [SIL Open Font License (OFL)](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
-- [Raleway](https://github.com/impallari/Raleway) ([1](public/fonts/raleway-v28-latin-500.woff2), [2](public/fonts/raleway-v28-latin-600.woff2)) is licensed under the [SIL Open Font License (OFL)](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
+- [Inter](https://rsms.me/inter) ([1](public/fonts/inter-v13-latin-400.woff2), [2](public/fonts/inter-v13-latin-500.woff2)) is licensed under the [SIL Open Font License (OFL)](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
+- [Raleway](https://github.com/impallari/Raleway) ([1](public/fonts/raleway-v29-latin-500.woff2), [2](public/fonts/raleway-v29-latin-600.woff2)) is licensed under the [SIL Open Font License (OFL)](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
 - [`avatar.png`](src/assets/avatar.png) was created by [Marga Hernandez](https://margahernandez.dorik.io).
 - The menu and mode SVGs used in [`header.astro`](src/components/page/header.astro) is taken and modified from [Tempo's Quill Icons](https://github.com/yourtempo/tempo-quill-icons) and [Jay Newey's Charm Icons](https://github.com/jaynewey/charm-icons), respectively.
 
