@@ -11,5 +11,16 @@ export const collections = {
       })
       .required()
       .strict()
+  }),
+  writings: defineCollection({
+    type: "content",
+    schema: z
+      .object({
+        title: z.string(),
+        dateCreated: z.date(),
+        dateUpdated: z.date()
+      })
+      .required()
+      .strict()
   })
 };

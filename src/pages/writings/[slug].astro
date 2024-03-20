@@ -8,16 +8,16 @@ import Article from "@layout/article.astro";
 import Page from "@layout/page.astro";
 
 export async function getStaticPaths() {
-  return (await getCollection("notes")).map((note) => ({
-    params: { slug: note.slug },
-    props: { note }
+  return (await getCollection("writings")).map((writing) => ({
+    params: { slug: writing.slug },
+    props: { writing }
   }));
 }
 
-type Props = { note: CollectionEntry<"notes"> };
-const { note } = Astro.props;
-const { Content } = await note.render();
-const { title, dateCreated, dateUpdated } = note.data;
+type Props = { writing: CollectionEntry<"writings"> };
+const { writing } = Astro.props;
+const { Content } = await writing.render();
+const { title, dateCreated, dateUpdated } = writing.data;
 ---
 
 <Page {title}>

@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+
+import PostItem from "@components/post-item.astro";
+import Page from "@layout/page.astro";
+
+const writings = await getCollection("writings");
+---
+
+<Page title="Writings">
+  <h1 class="smaller-spacing">Writings</h1>
+  <p class="larger-spacing">
+    Longer form writings, essays, or ramblings that you might be interested in
+  </p>
+  <ul>
+    {
+      writings
+        .sort(
+          (a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime()
+        )
+        .map(({ slug, data: { title, dateCreated, dateUpdated } }) => (
+          <PostItem
+            {title}
+            {dateCreated}
+            {dateUpdated}
+            link={`/writings/${slug}`}
+          />
+        ))
+    }
+  </ul>
+</Page>

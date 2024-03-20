@@ -28,8 +28,9 @@ $initialLogoMenuWidth: v-size(14);
     margin-left: v-size(4);
   }
 
-  // NOTE: Change to 'm-large' when more nav items are added
-  @include m-small {
+  // NOTE: The included media query may need to be updated when the number of
+  // nav items is updated.
+  @include m-large {
     .header {
       grid-template-columns: 1fr 2fr;
       justify-items: end;
@@ -98,7 +99,8 @@ $initialLogoMenuWidth: v-size(14);
     }
   }
 
-  // NOTE: Change to 'm-large' when more nav items are added
+  // NOTE: The included media query may need to be updated when the number of
+  // nav items is updated.
   @include m-medium {
     .header {
       grid-template-columns: 1fr 2fr 1fr;
