@@ -1,9 +1,12 @@
+import type { RehypePlugin } from "@astrojs/markdown-remark";
 import type { AstroIntegration, AstroUserConfig } from "astro";
+import type { Options } from "rehype-class-names";
 import type {
   LegacyAsyncImporter,
   LegacySharedOptions,
   LegacySyncImporter
 } from "sass";
+import type { ShikiTransformer } from "shiki";
 import type { PluginOption } from "vite";
 
 import cp from "node:child_process";
@@ -12,14 +15,91 @@ import path from "node:path";
 import nodeUrl from "node:url";
 import util from "node:util";
 
+import mdx from "@astrojs/mdx";
 import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
 import compress from "astro-compress";
 import { walk } from "estree-walker";
 import findCacheDirectory from "find-cache-dir";
 import gifsicle from "gifsicle";
 import { customAlphabet } from "nanoid";
+import rehypeClassNames from "rehype-class-names";
 import sharp from "sharp";
 sharp.cache(false);
+
+//==================================================
+// Astro - Shiki and rehype
+//==================================================
+
+const classNamesTransformer: ShikiTransformer = {
+  name: "class-names",
+  line(node) {
+    node.properties.class = "block-code-line";
+  },
+  span(node) {
+    node.properties.class = "block-code-token";
+  }
+};
+const classNamesPlugin: [RehypePlugin, Options] = [
+  rehypeClassNames,
+  { ":not(pre) > code": "inline-code" }
+];
+
+// Workaround since 'shikiConfig' does not support 'defaultColor' and
+// 'cssVariablePrefix' options yet. This manually does what happens when
+// 'defaultColor' is set to 'false' and 'cssVariablePrefix' is set to
+// '--c-code-'.
+// https://github.com/withastro/astro/issues/11238#issuecomment-2165715631
+function replaceShikiProperty(
+  style: string,
+  property: "background-color" | "--shiki-dark-bg" | "color" | "--shiki-dark"
+) {
+  const regex = new RegExp(`${property}:(?<hex>#[0-9a-z]{3,8})`, "i");
+
+  let variableName: string;
+  switch (property) {
+    case "background-color": {
+      variableName = "--c-code-light-bg";
+      break;
+    }
+    case "--shiki-dark-bg": {
+      variableName = "--c-code-dark-bg";
+      break;
+    }
+    case "color": {
+      variableName = "--c-code-light";
+      break;
+    }
+    case "--shiki-dark": {
+      variableName = "--c-code-dark";
+      break;
+    }
+  }
+
+  const hex = style.match(regex)!.groups!.hex;
+
+  return style.replace(regex, `${variableName}:${hex}`);
+}
+const themeTransformer: ShikiTransformer = {
+  name: "theme",
+  pre(node) {
+    let style = node.properties.style as string;
+
+    style = replaceShikiProperty(style, "background-color");
+    style = replaceShikiProperty(style, "--shiki-dark-bg");
+    style = replaceShikiProperty(style, "color");
+    style = replaceShikiProperty(style, "--shiki-dark");
+
+    node.properties.style = style;
+  },
+  span(node) {
+    let style = node.properties.style as string;
+
+    style = replaceShikiProperty(style, "color");
+    style = replaceShikiProperty(style, "--shiki-dark");
+
+    node.properties.style = style;
+  }
+};
 
 //==================================================
 // Astro - Integrations
@@ -93,16 +173,17 @@ const optimizeImagesIntegration: AstroIntegration = {
         name: "astro-optimize-images",
         create: true
       }) as string;
-      const sharpOptions = { limitInputPixels: false };
+      const sharpOptions = { limitInputPixels: false, unlimited: true };
       const imageOptions = {
         png: { compressionLevel: 9, quality: 80 },
+        jpg: { mozjpeg: true },
         webp: { effort: 6 }
       };
       for (let { original, webp, resize } of images) {
         original = path.join(distDir, original);
         webp = webp.map((filePath) => path.join(distDir, filePath));
 
-        const format = path.extname(original).slice(1) as "gif" | "png";
+        const format = path.extname(original).slice(1) as "gif" | "jpg" | "png";
         const image = sharp(original, {
           ...sharpOptions,
           animated: format === "gif"
@@ -154,8 +235,8 @@ const optimizeImagesIntegration: AstroIntegration = {
                   ...imageOptions.webp,
                   // For some reason, using lossless compression mode on large
                   // GIFs increase their WebP size but reduces the size of
-                  // smaller GIFs, so it is turned on for GIFs smaller than 1MB.
-                  lossless: (await fs.stat(original)).size / 1000 < 1000
+                  // smaller GIFs, so it is turned on for GIFs smaller than 2MB.
+                  lossless: (await fs.stat(original)).size / 2000 < 2000
                 })
                 .toFile(webp[i] as string);
             }
@@ -184,10 +265,11 @@ const optimizeImagesIntegration: AstroIntegration = {
               break;
             }
 
-            case "png": {
+            case "png":
+            case "jpg": {
               await fs.writeFile(
                 original,
-                await image.png(imageOptions.png).toBuffer(),
+                await image.toFormat(format, imageOptions[format]).toBuffer(),
                 "binary"
               );
 
@@ -307,9 +389,18 @@ const generateIdsPlugin: PluginOption = {
 
 export default <AstroUserConfig>{
   site: "https://mce.codes",
-  scopedStyleStrategy: "class",
-  compressHTML: false,
-  integrations: [optimizeImagesIntegration, compress({ Image: false })],
+  devToolbar: { enabled: false },
   server: { host: true, port: 6001 },
+  compressHTML: false,
+  scopedStyleStrategy: "class",
+  markdown: {
+    smartypants: false,
+    shikiConfig: {
+      themes: { light: "slack-ochin", dark: "slack-dark" },
+      transformers: [classNamesTransformer, themeTransformer]
+    },
+    rehypePlugins: [classNamesPlugin]
+  },
+  integrations: [mdx(), optimizeImagesIntegration, compress({ Image: false })],
   vite: { css: { preprocessorOptions: { scss } }, plugins: [generateIdsPlugin] }
 };

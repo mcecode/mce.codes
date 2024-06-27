@@ -169,6 +169,7 @@ import {
 
   const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");
   const rootStyle = document.documentElement.style;
+  const article = document.querySelector("main article") as HTMLElement | null;
   const modeTitle = document.getElementById(modeTitleId) as HTMLTitleElement & {
     // This type is a bit inaccurate because it could also be 'null', but either
     // 'setModeTitleBasedOnMedia' or 'setMode' are called right away at page
@@ -201,7 +202,20 @@ import {
       case "light": {
         rootStyle.setProperty("--c-foreground", colors.black);
         rootStyle.setProperty("--c-background", colors.white);
-        rootStyle.setProperty("--c-accent", colors.grayDark);
+        rootStyle.setProperty("--c-accent-1", colors.grayDark);
+        rootStyle.setProperty("--c-accent-2", colors.grayLight);
+
+        if (article) {
+          article.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
+            pre.style.setProperty("background-color", "var(--c-code-light-bg)");
+            pre.style.setProperty("color", "var(--c-code-light)");
+          });
+          article
+            .querySelectorAll<HTMLSpanElement>("span.block-code-token")
+            .forEach((span) => {
+              span.style.setProperty("color", "var(--c-code-light)");
+            });
+        }
 
         if (animateModeSvg) {
           modeMoon.classList.add("rotate-appear");
@@ -218,7 +232,20 @@ import {
       case "dark": {
         rootStyle.setProperty("--c-foreground", colors.white);
         rootStyle.setProperty("--c-background", colors.black);
-        rootStyle.setProperty("--c-accent", colors.grayLight);
+        rootStyle.setProperty("--c-accent-1", colors.grayLight);
+        rootStyle.setProperty("--c-accent-2", colors.grayDark);
+
+        if (article) {
+          article.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
+            pre.style.setProperty("background-color", "var(--c-code-dark-bg)");
+            pre.style.setProperty("color", "var(--c-code-dark)");
+          });
+          article
+            .querySelectorAll<HTMLSpanElement>("span.block-code-token")
+            .forEach((span) => {
+              span.style.setProperty("color", "var(--c-code-dark)");
+            });
+        }
 
         if (animateModeSvg) {
           modeMoon.classList.add("rotate-vanish");

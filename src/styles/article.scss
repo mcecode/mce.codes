@@ -1,11 +1,49 @@
 article {
-  h2 {
-    font-weight: 500;
+  padding-bottom: v-size(10);
+
+  p,
+  ul,
+  pre,
+  a:has(picture) {
+    margin-bottom: v-size(6, "em");
   }
-  ul {
-    margin-bottom: v-size(8, "em");
-  }
+
   li {
     list-style: circle inside;
+  }
+
+  .inline-code {
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    background-color: var(--c-accent-2);
+  }
+  pre {
+    padding: v-size(4, "em") 0;
+    border-radius: 10px;
+    background-color: var(--c-code-light-bg);
+    color: var(--c-code-light);
+
+    @include m-dark {
+      background-color: var(--c-code-dark-bg);
+      color: var(--c-code-dark);
+    }
+  }
+  .block-code-line:not(:empty) {
+    margin: 0 v-size(6, "em");
+  }
+  .block-code-token {
+    color: var(--c-code-light);
+
+    @include m-dark {
+      color: var(--c-code-dark);
+    }
+  }
+
+  a:has(picture),
+  picture {
+    display: inline-block;
+  }
+  img {
+    vertical-align: middle;
   }
 }

@@ -3,13 +3,15 @@
 :root {
   --c-foreground: #{v-color("black")};
   --c-background: #{v-color("white")};
-  --c-accent: #{v-color("grayDark")};
+  --c-accent-1: #{v-color("grayDark")};
+  --c-accent-2: #{v-color("grayLight")};
 }
 @include m-dark {
   :root {
     --c-foreground: #{v-color("white")};
     --c-background: #{v-color("black")};
-    --c-accent: #{v-color("grayLight")};
+    --c-accent-1: #{v-color("grayLight")};
+    --c-accent-2: #{v-color("grayDark")};
   }
 }
 
@@ -88,6 +90,10 @@ path {
 template {
   display: none;
 }
+code {
+  font-family: v-font("code");
+  font-size: 85%;
+}
 
 @include m-small {
   body {
@@ -125,7 +131,7 @@ template {
 }
 .small-text {
   font-size: v-size(3);
-  color: var(--c-accent);
+  color: var(--c-accent-1);
 }
 h1.larger-spacing {
   margin-bottom: v-size(5, "em");
