@@ -115,10 +115,7 @@ Great! Now we have our metronome. There's a problem though, even if the timer do
 
 We were able to account for timer drift, but now we got jittering.
 
-<a
-  href="https://knowyourmeme.com/photos/1388290-womp-womp-slang"
-  target="_blank"
->
+<a href="https://knowyourmeme.com/photos/1388290-womp-womp-slang">
   <Picture
     alt="Michael Scott from The Office; Womp womp meme"
     {...wompWompJpg}
@@ -229,10 +226,7 @@ Thus, unless the timer fires extremely late or the BPM set is set impossibly hig
 
 All that said, there you have it, we're done, no more jittering this time because we used the precise clock that comes with `AudioContext`.
 
-<a
-  href="https://tenor.com/view/dazed-and-confused-matthew-mc-conaughey-gif-3977028"
-  target="_blank"
->
+<a href="https://tenor.com/view/dazed-and-confused-matthew-mc-conaughey-gif-3977028">
   <Picture
     alt="David Wooderson from Dazed and Confused; Alright, alright, alright meme"
     {...alrightAlrightAlrightGif}
@@ -307,7 +301,7 @@ I think this solution is easier to reason with than the lookahead timer approach
 
 Nice, we got an alternative to the lookahead timer approach... this might be a nice point to end on, but...
 
-<a href="https://knowyourmeme.com/photos/2546187-pepe-silvia" target="_blank">
+<a href="https://knowyourmeme.com/photos/2546187-pepe-silvia">
   <Picture
     alt="Charlie Kelly from It's Always Sunny In Philadelphia; Pepe Silvia meme"
     {...pepeSilvaJpg}
@@ -369,7 +363,7 @@ playButton.onclick = async () => {
 
 That's it, we're done. This approach is the most robust of all that we've tried and has the least possibility of jittering since we don't have to deal with any latencies from the main thread. The only time that something could go wrong is if there's a problem with the setup or if the Web Audio API itself has a bug.
 
-<a href="https://tenor.com/view/ok-all-nice-gif-22927671" target="_blank">
+<a href="https://tenor.com/view/ok-all-nice-gif-22927671">
   <Picture
     alt="Brent Rambo from Apple's 1990s promotional video; Kid giving thumbs up meme"
     {...kidGivingThumbsUpGif}
