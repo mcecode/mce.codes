@@ -16,6 +16,8 @@ import nodeUrl from "node:url";
 import util from "node:util";
 
 import mdx from "@astrojs/mdx";
+// @ts-expect-error There's no type declaration but it exists.
+import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
 import compress from "astro-compress";
 import { walk } from "estree-walker";
@@ -399,6 +401,7 @@ export default <AstroUserConfig>{
       themes: { light: "slack-ochin", dark: "slack-dark" },
       transformers: [classNamesTransformer, themeTransformer]
     },
+    remarkPlugins: [remarkA11yEmoji],
     rehypePlugins: [classNamesPlugin]
   },
   integrations: [mdx(), optimizeImagesIntegration, compress({ Image: false })],
