@@ -1,3 +1,28 @@
+// Inspired from MDN's heading link styles
+h2 a {
+  text-decoration: none;
+
+  &::before {
+    $hashSize: v-size(3, "em");
+
+    content: "#";
+    display: inline-block;
+    width: $hashSize;
+    margin-left: -#{$hashSize};
+    color: var(--c-accent-1);
+    font-size: $hashSize;
+    visibility: hidden;
+  }
+
+  &:hover {
+    text-decoration: underline solid;
+
+    &::before {
+      visibility: visible;
+    }
+  }
+}
+
 article {
   padding-bottom: v-size(10);
 
@@ -12,6 +37,7 @@ article {
     list-style: circle inside;
   }
 
+  // Inspired from GitHub's inline code styles
   .inline-code {
     padding: 0.2em 0.4em;
     border-radius: 6px;

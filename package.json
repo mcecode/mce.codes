@@ -17,6 +17,7 @@
     "find-cache-dir": "^5.0.0",
     "gifsicle": "^7.0.1",
     "nanoid": "^5.0.6",
+    "rehype-autolink-headings": "^7.1.0",
     "rehype-class-names": "^2.0.0",
     "sass": "^1.62.1",
     "sharp": "^0.33.2"

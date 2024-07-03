@@ -1,6 +1,7 @@
 import type { RehypePlugin } from "@astrojs/markdown-remark";
 import type { AstroIntegration, AstroUserConfig } from "astro";
-import type { Options } from "rehype-class-names";
+import type { Options as AutolinkHeadingsOptions } from "rehype-autolink-headings";
+import type { Options as ClassNamesOptions } from "rehype-class-names";
 import type {
   LegacyAsyncImporter,
   LegacySharedOptions,
@@ -15,8 +16,9 @@ import path from "node:path";
 import nodeUrl from "node:url";
 import util from "node:util";
 
+import { rehypeHeadingIds } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
-// @ts-expect-error There's no type declaration but it exists.
+// @ts-expect-error - There's no type declaration but it exists.
 import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
 import compress from "astro-compress";
@@ -24,12 +26,13 @@ import { walk } from "estree-walker";
 import findCacheDirectory from "find-cache-dir";
 import gifsicle from "gifsicle";
 import { customAlphabet } from "nanoid";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
 import sharp from "sharp";
 sharp.cache(false);
 
 //==================================================
-// Astro - Shiki and rehype
+// Astro - Markdown transformers and plugins
 //==================================================
 
 const classNamesTransformer: ShikiTransformer = {
@@ -41,7 +44,7 @@ const classNamesTransformer: ShikiTransformer = {
     node.properties.class = "block-code-token";
   }
 };
-const classNamesPlugin: [RehypePlugin, Options] = [
+const classNamesPlugin: [RehypePlugin, ClassNamesOptions] = [
   rehypeClassNames,
   { ":not(pre) > code": "inline-code" }
 ];
@@ -102,6 +105,11 @@ const themeTransformer: ShikiTransformer = {
     node.properties.style = style;
   }
 };
+
+const autolinkHeadingsPlugin: [RehypePlugin, AutolinkHeadingsOptions] = [
+  rehypeAutolinkHeadings,
+  { behavior: "wrap" }
+];
 
 //==================================================
 // Astro - Integrations
@@ -402,7 +410,7 @@ export default <AstroUserConfig>{
       transformers: [classNamesTransformer, themeTransformer]
     },
     remarkPlugins: [remarkA11yEmoji],
-    rehypePlugins: [classNamesPlugin]
+    rehypePlugins: [classNamesPlugin, rehypeHeadingIds, autolinkHeadingsPlugin]
   },
   integrations: [mdx(), optimizeImagesIntegration, compress({ Image: false })],
   vite: { css: { preprocessorOptions: { scss } }, plugins: [generateIdsPlugin] }
