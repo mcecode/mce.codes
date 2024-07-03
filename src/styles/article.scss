@@ -44,7 +44,6 @@ article {
     background-color: var(--c-accent-2);
   }
   pre {
-    padding: v-size(4, "em") 0;
     border-radius: 10px;
     background-color: var(--c-code-light-bg);
     color: var(--c-code-light);
@@ -54,8 +53,9 @@ article {
       color: var(--c-code-dark);
     }
   }
-  .block-code-line:not(:empty) {
-    margin: 0 v-size(6, "em");
+  .block-code {
+    display: inline-block;
+    margin: v-size(4, "em") v-size(6, "em");
   }
   .block-code-token {
     color: var(--c-code-light);

@@ -37,6 +37,9 @@ sharp.cache(false);
 
 const classNamesTransformer: ShikiTransformer = {
   name: "class-names",
+  code(node) {
+    node.properties.class = "block-code";
+  },
   line(node) {
     node.properties.class = "block-code-line";
   },
