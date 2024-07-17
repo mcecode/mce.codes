@@ -2,6 +2,7 @@ import type { RehypePlugin } from "@astrojs/markdown-remark";
 import type { AstroIntegration, AstroUserConfig } from "astro";
 import type { Options as AutolinkHeadingsOptions } from "rehype-autolink-headings";
 import type { Options as ClassNamesOptions } from "rehype-class-names";
+import type { Options as ExternalLinksOptions } from "rehype-external-links";
 import type {
   LegacyAsyncImporter,
   LegacySharedOptions,
@@ -21,6 +22,7 @@ import mdx from "@astrojs/mdx";
 // @ts-expect-error - There's no type declaration but it exists.
 import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
+import { transformerNotationDiff } from "@shikijs/transformers";
 import compress from "astro-compress";
 import { walk } from "estree-walker";
 import findCacheDirectory from "find-cache-dir";
@@ -28,6 +30,7 @@ import gifsicle from "gifsicle";
 import { customAlphabet } from "nanoid";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
+import rehypeExternalLinks from "rehype-external-links";
 import sharp from "sharp";
 sharp.cache(false);
 
@@ -37,6 +40,9 @@ sharp.cache(false);
 
 const classNamesTransformer: ShikiTransformer = {
   name: "class-names",
+  pre(node) {
+    node.properties.class = "block-code-wrapper";
+  },
   code(node) {
     node.properties.class = "block-code";
   },
@@ -51,12 +57,12 @@ const classNamesPlugin: [RehypePlugin, ClassNamesOptions] = [
   rehypeClassNames,
   { ":not(pre) > code": "inline-code" }
 ];
+const diffNotationTransformer = transformerNotationDiff({
+  classActivePre: "",
+  classLineAdd: "diff insert",
+  classLineRemove: "diff delete"
+});
 
-// Workaround since 'shikiConfig' does not support 'defaultColor' and
-// 'cssVariablePrefix' options yet. This manually does what happens when
-// 'defaultColor' is set to 'false' and 'cssVariablePrefix' is set to
-// '--c-code-'.
-// https://github.com/withastro/astro/issues/11238#issuecomment-2165715631
 function replaceShikiProperty(
   style: string,
   property: "background-color" | "--shiki-dark-bg" | "color" | "--shiki-dark"
@@ -87,6 +93,15 @@ function replaceShikiProperty(
 
   return style.replace(regex, `${variableName}:${hex}`);
 }
+/**
+ * Workaround since 'shikiConfig' does not support 'defaultColor' and
+ * 'cssVariablePrefix' options yet. This manually does what happens when
+ * 'defaultColor' is set to 'false' and 'cssVariablePrefix' is set to
+ * '--c-code-'.
+ *
+ * @see
+ * {@link https://github.com/withastro/astro/issues/11238#issuecomment-2165715631}
+ */
 const themeTransformer: ShikiTransformer = {
   name: "theme",
   pre(node) {
@@ -112,6 +127,28 @@ const themeTransformer: ShikiTransformer = {
 const autolinkHeadingsPlugin: [RehypePlugin, AutolinkHeadingsOptions] = [
   rehypeAutolinkHeadings,
   { behavior: "wrap" }
+];
+
+/**
+ * Hijacks rehype-external-links to add classes to links whose href value
+ * matches its text content instead of adding rel and target attributes.
+ */
+const externalLinksPlugin: [RehypePlugin, ExternalLinksOptions] = [
+  rehypeExternalLinks,
+  {
+    rel: [],
+    test: (element) => {
+      if (
+        element.children[0]?.type === "text" &&
+        element.properties.href === element.children[0].value
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+    properties: { class: "word-break-all" }
+  }
 ];
 
 //==================================================
@@ -410,10 +447,19 @@ export default <AstroUserConfig>{
     smartypants: false,
     shikiConfig: {
       themes: { light: "slack-ochin", dark: "slack-dark" },
-      transformers: [classNamesTransformer, themeTransformer]
+      transformers: [
+        classNamesTransformer,
+        diffNotationTransformer,
+        themeTransformer
+      ]
     },
     remarkPlugins: [remarkA11yEmoji],
-    rehypePlugins: [classNamesPlugin, rehypeHeadingIds, autolinkHeadingsPlugin]
+    rehypePlugins: [
+      classNamesPlugin,
+      rehypeHeadingIds,
+      autolinkHeadingsPlugin,
+      externalLinksPlugin
+    ]
   },
   integrations: [mdx(), optimizeImagesIntegration, compress({ Image: false })],
   vite: { css: { preprocessorOptions: { scss } }, plugins: [generateIdsPlugin] }

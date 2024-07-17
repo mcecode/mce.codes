@@ -66,6 +66,9 @@ a {
     text-decoration-style: dotted;
   }
 }
+strong {
+  font-weight: 700;
+}
 button {
   cursor: pointer;
 }
@@ -132,6 +135,9 @@ code {
 .small-text {
   font-size: v-size(3);
   color: var(--c-accent-1);
+}
+.word-break-all {
+  word-break: break-all;
 }
 h1.larger-spacing {
   margin-bottom: v-size(5, "em");

@@ -1,4 +1,5 @@
 @use "sass:list";
+@use "sass:string";
 
 @use "lib";
 
@@ -7,7 +8,7 @@
 @use "json:colors" as *;
 
 @function color($color) {
-  @return lib.deep-get($colors, $color);
+  @return string.unquote(lib.deep-get($colors, $color));
 }
 
 // Fonts

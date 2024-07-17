@@ -1,3 +1,32 @@
+article {
+  padding-bottom: v-const("section_spacing.small");
+
+  p,
+  ul,
+  pre,
+  a:has(picture) {
+    margin-bottom: v-size(6, "em");
+  }
+
+  li {
+    list-style: circle inside;
+  }
+
+  a:has(picture),
+  picture {
+    display: inline-block;
+  }
+  img {
+    vertical-align: middle;
+  }
+
+  blockquote {
+    padding-left: v-size(4, "em");
+    border-left: 2px solid var(--c-accent-1);
+    color: var(--c-accent-1);
+  }
+}
+
 // Inspired from MDN's heading link styles
 h2 a {
   text-decoration: none;
@@ -23,53 +52,70 @@ h2 a {
   }
 }
 
-article {
-  padding-bottom: v-size(10);
+// Inspired from GitHub's inline code styles
+.inline-code {
+  padding: v-size(1, "em") v-size(2, "em");
+  border-radius: 6px;
+  background-color: var(--c-accent-2);
+}
 
-  p,
-  ul,
-  pre,
-  a:has(picture) {
-    margin-bottom: v-size(6, "em");
-  }
+$codeSpacing: v-size(6, "em");
+.block-code-wrapper {
+  border-radius: 10px;
+  background-color: var(--c-code-light-bg);
+  color: var(--c-code-light);
 
-  li {
-    list-style: circle inside;
+  @include m-dark {
+    background-color: var(--c-code-dark-bg);
+    color: var(--c-code-dark);
   }
+}
+.block-code {
+  display: inline-block;
+  min-width: calc(100% - $codeSpacing * 2);
+  margin: $codeSpacing;
+}
+.block-code-line.diff {
+  position: relative;
+  display: inline-block;
+  width: 100%;
 
-  // Inspired from GitHub's inline code styles
-  .inline-code {
-    padding: 0.2em 0.4em;
-    border-radius: 6px;
-    background-color: var(--c-accent-2);
-  }
-  pre {
-    border-radius: 10px;
-    background-color: var(--c-code-light-bg);
-    color: var(--c-code-light);
-
-    @include m-dark {
-      background-color: var(--c-code-dark-bg);
-      color: var(--c-code-dark);
-    }
-  }
-  .block-code {
-    display: inline-block;
-    margin: v-size(4, "em") v-size(6, "em");
-  }
-  .block-code-token {
-    color: var(--c-code-light);
-
-    @include m-dark {
-      color: var(--c-code-dark);
-    }
+  &::before {
+    position: absolute;
+    left: -#{v-size(4, "em")};
   }
 
-  a:has(picture),
-  picture {
-    display: inline-block;
+  &::after {
+    content: "";
+    position: absolute;
+    left: -#{$codeSpacing};
+    min-height: 100%;
+    width: calc(100% + $codeSpacing * 2);
+    opacity: 15%;
   }
-  img {
-    vertical-align: middle;
+}
+.block-code-line.insert {
+  &::before {
+    content: "+";
+  }
+  &::after {
+    background-color: v-color("green");
+  }
+}
+.block-code-line.delete {
+  &::before {
+    content: "-";
+  }
+  &::after {
+    background-color: v-color("red");
+  }
+}
+.block-code-token {
+  position: relative;
+  z-index: 1;
+  color: var(--c-code-light);
+
+  @include m-dark {
+    color: var(--c-code-dark);
   }
 }
