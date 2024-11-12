@@ -1,6 +1,11 @@
 article {
   padding-bottom: v-const("section_spacing.small");
 
+  h2,
+  h3 {
+    margin-bottom: v-size(4, "em");
+  }
+
   p,
   ul,
   pre,
