@@ -28,7 +28,8 @@ article {
 }
 
 // Inspired from MDN's heading link styles
-h2 a {
+h2 a,
+h3 a {
   text-decoration: none;
 
   &::before {
