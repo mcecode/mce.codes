@@ -3,11 +3,7 @@ import type { AstroIntegration, AstroUserConfig } from "astro";
 import type { Options as AutolinkHeadingsOptions } from "rehype-autolink-headings";
 import type { Options as ClassNamesOptions } from "rehype-class-names";
 import type { Options as ExternalLinksOptions } from "rehype-external-links";
-import type {
-  LegacyAsyncImporter,
-  LegacySharedOptions,
-  LegacySyncImporter
-} from "sass";
+import type { FileImporter, Importer, StringOptions } from "sass-embedded";
 import type { ShikiTransformer } from "shiki";
 import type { PluginOption } from "vite";
 
@@ -338,29 +334,30 @@ const optimizeImagesIntegration: AstroIntegration = {
 // Vite - SCSS
 //==================================================
 
-const stylesDir = nodeUrl.fileURLToPath(
-  path.join(path.dirname(import.meta.url), "src", "styles")
-);
+const stylesDir = path.join(path.dirname(import.meta.url), "src", "styles");
 
 const partialsImport = '@use "partials:" as *;';
-const importScssPartials: LegacySyncImporter = (url) => {
-  if (!url.startsWith("partials:")) {
-    return null;
-  }
+const importScssPartials: FileImporter<"sync"> = {
+  findFileUrl(url) {
+    if (url !== "partials:") {
+      return null;
+    }
 
-  return { file: path.join(stylesDir, "partials", "_index.scss") };
+    return new URL(path.join(stylesDir, "partials", "_index.scss"));
+  }
 };
 
-const importScssJson: LegacyAsyncImporter = (url, _, done) => {
-  (async () => {
+const importScssJson: Importer<"async"> = {
+  canonicalize(url) {
     if (!url.startsWith("json:")) {
-      done(null);
+      return null;
     }
 
     const [, baseName = ""] = addExtension(url, ".json").split(":");
-    const json = JSON.parse(
-      await fs.readFile(path.join(stylesDir, "data", baseName), "utf-8")
-    );
+    return new URL(path.join(stylesDir, "data", baseName));
+  },
+  async load(url) {
+    const json = JSON.parse(await fs.readFile(url, "utf-8"));
 
     let scss = "";
     for (const [key, value] of Object.entries(json)) {
@@ -373,19 +370,31 @@ const importScssJson: LegacyAsyncImporter = (url, _, done) => {
       scss += ");\n";
     }
 
-    done({ contents: scss });
-  })();
+    return {
+      syntax: "scss",
+      contents: scss
+    };
+  }
 };
 
-type ViteSassOptions = LegacySharedOptions<"sync" | "async"> & {
+/**
+ * @see
+ * {@link https://vite.dev/config/shared-options.html#css-preprocessoroptions}
+ */
+type ViteSassOptions = StringOptions<"async"> & {
+  /**
+   * Sets which Sass API to use.
+   */
+  api?: "legacy" | "modern" | "modern-compiler";
   /**
    * Injects code at the top of each stylesheet.
    */
   additionalData?: string;
 };
 const scss: ViteSassOptions = {
+  api: "modern-compiler",
   additionalData: partialsImport,
-  importer: [importScssPartials, importScssJson]
+  importers: [importScssPartials, importScssJson]
 };
 
 //==================================================
