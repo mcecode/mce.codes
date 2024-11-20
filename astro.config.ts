@@ -61,51 +61,29 @@ const diffNotationTransformer = transformerNotationDiff({
 
 function replaceShikiProperty(
   style: string,
-  property: "background-color" | "--shiki-dark-bg" | "color" | "--shiki-dark"
+  property:
+    | "--shiki-light-bg"
+    | "--shiki-dark-bg"
+    | "--shiki-light"
+    | "--shiki-dark"
 ) {
   const regex = new RegExp(`${property}:(?<hex>#[0-9a-z]{3,8})`, "i");
-
-  let variableName: string;
-  switch (property) {
-    case "background-color": {
-      variableName = "--c-code-light-bg";
-      break;
-    }
-    case "--shiki-dark-bg": {
-      variableName = "--c-code-dark-bg";
-      break;
-    }
-    case "color": {
-      variableName = "--c-code-light";
-      break;
-    }
-    case "--shiki-dark": {
-      variableName = "--c-code-dark";
-      break;
-    }
-  }
-
+  const variableName = property.replace("shiki", "c-code");
   const hex = style.match(regex)!.groups!.hex;
-
   return style.replace(regex, `${variableName}:${hex}`);
 }
 /**
- * Workaround since 'shikiConfig' does not support 'defaultColor' and
- * 'cssVariablePrefix' options yet. This manually does what happens when
- * 'defaultColor' is set to 'false' and 'cssVariablePrefix' is set to
- * '--c-code-'.
- *
- * @see
- * {@link https://github.com/withastro/astro/issues/11238#issuecomment-2165715631}
+ * This does what 'cssVariablePrefix' does when set to `--c-code-` since
+ * `shikiConfig` does not support it.
  */
-const themeTransformer: ShikiTransformer = {
+const cssVariablePrefixTransformer: ShikiTransformer = {
   name: "theme",
   pre(node) {
     let style = node.properties.style as string;
 
-    style = replaceShikiProperty(style, "background-color");
+    style = replaceShikiProperty(style, "--shiki-light-bg");
     style = replaceShikiProperty(style, "--shiki-dark-bg");
-    style = replaceShikiProperty(style, "color");
+    style = replaceShikiProperty(style, "--shiki-light");
     style = replaceShikiProperty(style, "--shiki-dark");
 
     node.properties.style = style;
@@ -113,7 +91,7 @@ const themeTransformer: ShikiTransformer = {
   span(node) {
     let style = node.properties.style as string;
 
-    style = replaceShikiProperty(style, "color");
+    style = replaceShikiProperty(style, "--shiki-light");
     style = replaceShikiProperty(style, "--shiki-dark");
 
     node.properties.style = style;
@@ -455,11 +433,12 @@ export default <AstroUserConfig>{
   markdown: {
     smartypants: false,
     shikiConfig: {
+      defaultColor: false,
       themes: { light: "slack-ochin", dark: "slack-dark" },
       transformers: [
         classNamesTransformer,
         diffNotationTransformer,
-        themeTransformer
+        cssVariablePrefixTransformer
       ]
     },
     remarkPlugins: [remarkA11yEmoji],
