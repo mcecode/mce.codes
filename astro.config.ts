@@ -133,7 +133,7 @@ const execFile = util.promisify(cp.execFile);
 const optimizeImagesIntegration: AstroIntegration = {
   name: "optimize-images",
   hooks: {
-    async "astro:build:done"({ dir, routes }) {
+    async "astro:build:done"({ dir, pages }) {
       type Resize = "" | "up" | "down";
       type Images = { original: string; webp: string[]; resize: Resize }[];
       type MatchGroups = {
@@ -143,17 +143,17 @@ const optimizeImagesIntegration: AstroIntegration = {
         postSrc: string;
       };
 
+      const distDir = nodeUrl.fileURLToPath(dir);
+      const images: Images = [];
+
       const resizeSuffixes = ["a", "b", "c", "d", "e"];
       const resizeUpMultipliers = [1, 1.5, 2, 3, 4];
       const resizeDownMultipliers = [0.25, 0.375, 0.5, 0.75, 1];
-      const images: Images = [];
 
-      for (const route of routes) {
-        if (!route.distURL) {
-          continue;
-        }
-
-        const htmlPath = nodeUrl.fileURLToPath(route.distURL);
+      const htmlPaths = pages.map(({ pathname }) =>
+        path.join(distDir, pathname, "index.html")
+      );
+      for (const htmlPath of htmlPaths) {
         let html = await fs.readFile(htmlPath, "utf-8");
         const matches = html.matchAll(
           /<img optimize-image resize="(?<resize>[a-z-]*)"(?<preSrc>.+)src="(?<src>[^"]+)"(?<postSrc>.+)>/g
@@ -192,7 +192,6 @@ const optimizeImagesIntegration: AstroIntegration = {
         await fs.writeFile(htmlPath, html, "utf-8");
       }
 
-      const distDir = nodeUrl.fileURLToPath(dir);
       const cacheDir = findCacheDirectory({
         name: "astro-optimize-images",
         create: true
@@ -427,7 +426,6 @@ const generateIdsPlugin: PluginOption = {
 export default <AstroUserConfig>{
   site: "https://mce.codes",
   devToolbar: { enabled: false },
-  server: { host: true, port: 6001 },
   compressHTML: false,
   scopedStyleStrategy: "class",
   markdown: {

@@ -1,8 +1,9 @@
+import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 
 export const collections = {
   notes: defineCollection({
-    type: "content",
+    loader: glob({ base: "./src/content/notes", pattern: "**/*.{md,mdx}" }),
     schema: z
       .object({
         title: z.string(),
@@ -13,7 +14,7 @@ export const collections = {
       .strict()
   }),
   writings: defineCollection({
-    type: "content",
+    loader: glob({ base: "./src/content/writings", pattern: "**/*.{md,mdx}" }),
     schema: z
       .object({
         title: z.string(),

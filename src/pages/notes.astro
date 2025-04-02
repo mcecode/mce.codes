@@ -19,13 +19,8 @@ const notes = await getCollection("notes");
         .sort(
           (a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime()
         )
-        .map(({ slug, data: { title, dateCreated, dateUpdated } }) => (
-          <PostItem
-            {title}
-            {dateCreated}
-            {dateUpdated}
-            link={`/notes/${slug}`}
-          />
+        .map(({ id, data: { title, dateCreated, dateUpdated } }) => (
+          <PostItem {title} {dateCreated} {dateUpdated} link={`/notes/${id}`} />
         ))
     }
   </ul>

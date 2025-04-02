@@ -1,23 +1,23 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 
 import CreatedUpdatedTime from "@components/created-updated-time.astro";
 import Article from "@layout/article.astro";
 import Page from "@layout/page.astro";
 
 export async function getStaticPaths() {
-  return (await getCollection("writings")).map((writing) => ({
-    params: { slug: writing.slug },
-    props: { writing }
+  return (await getCollection("notes")).map((note) => ({
+    params: { id: note.id },
+    props: { note }
   }));
 }
 
-type Props = { writing: CollectionEntry<"writings"> };
-const { writing } = Astro.props;
-const { Content } = await writing.render();
-const { title, dateCreated, dateUpdated } = writing.data;
+type Props = { note: CollectionEntry<"notes"> };
+const { note } = Astro.props;
+const { Content } = await render(note);
+const { title, dateCreated, dateUpdated } = note.data;
 ---
 
 <Page {title}>
