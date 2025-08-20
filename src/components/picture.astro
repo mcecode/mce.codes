@@ -1,45 +1,39 @@
 ---
+import type { ImageMetadata } from "astro";
+
 type Props = {
-  src: string;
-  width: number;
-  height: number;
   alt: string;
   class?: string | { picture: string; img: string };
   resize?: "up" | "down";
-  format?: string;
-};
+} & ImageMetadata;
 
 let pictureClass;
 let imgClass;
-
 if (typeof Astro.props.class === "string") {
   pictureClass = Astro.props.class;
 }
-
 if (typeof Astro.props.class === "object" && Astro.props.class !== null) {
   pictureClass = Astro.props.class.picture;
   imgClass = Astro.props.class.img;
 }
 
 const { resize = "" } = Astro.props;
-
 if (resize === "down") {
   Astro.props.width = Astro.props.width * 0.25;
   Astro.props.height = Astro.props.height * 0.25;
 }
 
-delete Astro.props.class;
-delete Astro.props.resize;
-delete Astro.props.format;
+const { alt, src, width, height } = Astro.props;
 ---
 
-{/* Formatting needs to be maintained for the integration to work properly. */}
-<!-- prettier-ignore -->
-<picture class={pictureClass}>
-  {/*
-    For some reason TypeScript sees a type error in the 'class' property when
-    there should be none.
-  */}
-  <!-- @ts-expect-error -->
-  <img optimize-image resize=`${resize}` class={imgClass} decoding="async" loading="lazy" {...Astro.props} />
+<picture optimize-media optimize-media-resize={resize} class={pictureClass}>
+  <img
+    {src}
+    {alt}
+    {width}
+    {height}
+    class={imgClass}
+    decoding="async"
+    loading="lazy"
+  />
 </picture>

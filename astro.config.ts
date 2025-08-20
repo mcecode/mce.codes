@@ -10,7 +10,7 @@ import type { PluginOption } from "vite";
 import cp from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import nodeUrl from "node:url";
+import nodeURL from "node:url";
 import util from "node:util";
 
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
@@ -20,7 +20,7 @@ import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
 import { transformerNotationDiff } from "@shikijs/transformers";
 import compress from "astro-compress";
-import { walk } from "estree-walker";
+import { walk as walkJS } from "estree-walker";
 import findCacheDirectory from "find-cache-dir";
 import gifsicle from "gifsicle";
 import { customAlphabet } from "nanoid";
@@ -28,6 +28,13 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
 import rehypeExternalLinks from "rehype-external-links";
 import sharp from "sharp";
+import {
+  ELEMENT_NODE,
+  h as createElementNode,
+  parse as parseHTML,
+  render as renderHTML,
+  walk as walkHTML
+} from "ultrahtml";
 sharp.cache(false);
 
 //==================================================
@@ -130,70 +137,82 @@ const externalLinksPlugin: [RehypePlugin, ExternalLinksOptions] = [
 //==================================================
 
 const execFile = util.promisify(cp.execFile);
-const optimizeImagesIntegration: AstroIntegration = {
-  name: "optimize-images",
+const optimizeMediaIntegration: AstroIntegration = {
+  name: "optimize-media",
   hooks: {
     async "astro:build:done"({ dir, pages }) {
-      type Resize = "" | "up" | "down";
-      type Images = { original: string; webp: string[]; resize: Resize }[];
-      type MatchGroups = {
-        resize: Resize;
-        preSrc: string;
-        src: string;
-        postSrc: string;
-      };
+      const resizeValues = ["", "up", "down"] as const;
+      const resizeSuffixes = ["a", "b", "c", "d", "e"] as const;
+      const resizeUpMultipliers = [1, 1.5, 2, 3, 4] as const;
+      const resizeDownMultipliers = [0.25, 0.375, 0.5, 0.75, 1] as const;
 
-      const distDir = nodeUrl.fileURLToPath(dir);
-      const images: Images = [];
-
-      const resizeSuffixes = ["a", "b", "c", "d", "e"];
-      const resizeUpMultipliers = [1, 1.5, 2, 3, 4];
-      const resizeDownMultipliers = [0.25, 0.375, 0.5, 0.75, 1];
+      const distDir = nodeURL.fileURLToPath(dir);
+      const images: {
+        original: string;
+        webp: string[];
+        resize: (typeof resizeValues)[number];
+      }[] = [];
 
       const htmlPaths = pages.map(({ pathname }) =>
         path.join(distDir, pathname, "index.html")
       );
       for (const htmlPath of htmlPaths) {
-        let html = await fs.readFile(htmlPath, "utf-8");
-        const matches = html.matchAll(
-          /<img optimize-image resize="(?<resize>[a-z-]*)"(?<preSrc>.+)src="(?<src>[^"]+)"(?<postSrc>.+)>/g
-        );
+        const htmlAST = parseHTML(await fs.readFile(htmlPath, "utf-8"));
+        await walkHTML(htmlAST, async (node) => {
+          if (
+            node.type === ELEMENT_NODE &&
+            node.name === "picture" &&
+            Object.keys(node.attributes).includes("optimize-media")
+          ) {
+            const img = node.children.find((child) => child.name === "img");
+            if (!img || img.type !== ELEMENT_NODE) {
+              throw new Error("'picture' must have an 'img' child.");
+            }
 
-        for (const match of matches) {
-          const { resize, preSrc, src, postSrc } = match.groups as MatchGroups;
-          const extensionlessPath = src.slice(0, src.lastIndexOf("."));
-          let webp;
+            const resize = node.attributes[
+              "optimize-media-resize"
+            ] as (typeof resizeValues)[number];
+            if (!resizeValues.includes(resize)) {
+              throw new Error("'resize' attribute must be set.");
+            }
 
-          if (resize === "") {
-            webp = [`${extensionlessPath}.webp`];
-          } else {
-            webp = resizeSuffixes.map(
-              (suffix) => `${extensionlessPath}${suffix}.webp`
-            );
-          }
+            const { src } = img.attributes;
+            if (typeof src !== "string") {
+              throw new Error("'src' attribute must be set.");
+            }
 
-          images.push({ original: src, webp, resize });
+            const extensionlessPath = src.slice(0, src.lastIndexOf("."));
+            let webp;
+            if (resize === "") {
+              webp = [`${extensionlessPath}.webp`];
+            } else {
+              webp = resizeSuffixes.map(
+                (suffix) => `${extensionlessPath}${suffix}.webp`
+              );
+            }
 
-          html = html.replace(
-            match[0],
-            `
-              <source srcset="${
+            images.push({ original: src, webp, resize });
+
+            const source = createElementNode("source", {
+              type: "image/webp",
+              srcset:
                 webp.length === 1
                   ? webp[0]
                   : webp.map(
                       (filePath, i) => `${filePath} ${resizeUpMultipliers[i]}x`
                     )
-              }" type="image/webp">
-              <img ${preSrc} src="${src}" ${postSrc}>
-            `
-          );
-        }
+            });
 
-        await fs.writeFile(htmlPath, html, "utf-8");
+            node.children = [source, img];
+            delete node.attributes["optimize-media"];
+            delete node.attributes["optimize-media-resize"];
+          }
+        });
+        await fs.writeFile(htmlPath, await renderHTML(htmlAST), "utf-8");
       }
 
       const cacheDir = findCacheDirectory({
-        name: "astro-optimize-images",
+        name: "astro-optimize-media",
         create: true
       }) as string;
       const sharpOptions = { limitInputPixels: false, unlimited: true };
@@ -390,7 +409,7 @@ const generateIdsPlugin: PluginOption = {
 
     const data = {};
 
-    walk(this.parse(code), {
+    walkJS(this.parse(code), {
       enter(node, parent) {
         if (
           node.type === "VariableDeclaration" &&
@@ -447,6 +466,6 @@ export default <AstroUserConfig>{
       externalLinksPlugin
     ]
   },
-  integrations: [mdx(), optimizeImagesIntegration, compress({ Image: false })],
+  integrations: [mdx(), optimizeMediaIntegration, compress({ Image: false })],
   vite: { css: { preprocessorOptions: { scss } }, plugins: [generateIdsPlugin] }
 };
