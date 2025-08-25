@@ -1,7 +1,7 @@
 ---
 title: "Cheatsheet: Git"
 dateCreated: 2024-11-12
-dateUpdated: 2024-11-12
+dateUpdated: 2025-08-25
 ---
 
 This cheatsheet assumes that you're already familiar with Git concepts and know the usual `init`, `pull`, `add`, `commit`, `push` flow. It aims to document commands and flags that I tend to use but forget when I haven't used them in a while.
@@ -98,6 +98,12 @@ git stash -m <message>
 
 ```console
 git stash list
+```
+
+### Show changes in stash
+
+```console
+git stash show [<index>]
 ```
 
 ### Apply stash to current working tree
@@ -232,6 +238,24 @@ Or to discard the changes you've done so far and exit the interactive rebase:
 
 ```console
 git rebase --abort
+```
+
+## Rebasing
+
+### Fix rebase conflicts
+
+When conflicts occur from a `git rebase` or a `git pull --rebase`. Fix the files with conflicts, stage them, then run:
+
+```console
+git rebase --continue
+```
+
+## Pushing
+
+### Push to a remote branch with a different name
+
+```console
+git push [<repository>] <local-branch>:<remote-branch>
 ```
 
 ## References
