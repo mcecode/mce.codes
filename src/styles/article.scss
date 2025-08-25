@@ -13,8 +13,14 @@ article {
     margin-bottom: v-size(6, "em");
   }
 
+  ul > li {
+    list-style-type: circle;
+  }
+  ol > li {
+    list-style-type: decimal;
+  }
   li {
-    list-style: circle inside;
+    margin-left: v-size(4, "em");
   }
 
   a:has(picture),
