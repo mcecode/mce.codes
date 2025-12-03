@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache images
         uses: actions/cache@v4
         with:
@@ -27,7 +27,7 @@ jobs:
           key: image-cache-${{ runner.os }}-${{ hashFiles('**/src/assets/**') }}
           restore-keys: image-cache-${{ runner.os }}-
       - name: Install dependencies and build and upload website
-        uses: withastro/action@v2
+        uses: withastro/action@v5
         with:
           node-version: lts/*
 
