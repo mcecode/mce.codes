@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 
-import PostItem from "@components/post-item.astro";
-import Page from "@layout/page.astro";
+import PostItem from "@/components/post-item.astro";
+import Page from "@/layout/page.astro";
 
 const notes = await getCollection("notes");
 ---

@@ -1,16 +1,4 @@
 {
 	"extends": "astro/tsconfigs/strictest",
-	"include": [".astro/types.d.ts", "**/*"],
-	"exclude": ["dist"],
-	"compilerOptions": {
-		"allowImportingTsExtensions": true,
-		"baseUrl": ".",
-		"paths": {
-			"@assets/*": ["src/assets/*"],
-			"@components/*": ["src/components/*"],
-			"@layout/*": ["src/layout/*"],
-			"@lib/*": ["src/lib/*"],
-			"@styles/*": ["src/styles/*"]
-		}
-	}
+	"compilerOptions": { "paths": { "@/*": ["./src/*"] } }
 }

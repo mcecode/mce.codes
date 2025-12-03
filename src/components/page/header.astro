@@ -1,5 +1,5 @@
 ---
-import "@styles/header.scss";
+import "@/styles/header.scss";
 
 import {
 	headerId,
@@ -15,7 +15,7 @@ import {
 	modeTitleId,
 	navId,
 	navListId,
-} from "@components/page/header.ids";
+} from "@/components/page/header.ids.ts";
 ---
 
 <header id={headerId} class="header no-decor">
@@ -107,10 +107,10 @@ import {
 		modeTitleId,
 		navId,
 		navListId,
-	} from "@components/page/header.ids";
-	import FocusTrap from "@lib/focus-trap";
-	import Store from "@lib/store.ts";
-	import { colors } from "@styles/data/colors.json";
+	} from "@/components/page/header.ids.ts";
+	import FocusTrap from "@/lib/focus-trap.ts";
+	import Store from "@/lib/store.ts";
+	import { colors } from "@/styles/data/colors.json";
 
 	const header = document.getElementById(headerId) as HTMLElement;
 
