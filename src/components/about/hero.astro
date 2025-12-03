@@ -5,41 +5,41 @@ import avatarPng from "@assets/avatar.png";
 ---
 
 <section>
-  <Picture resize="down" alt="mcecode's avatar" {...avatarPng} />
-  <h1>Hi, I'm Matthew</h1>
-  <p>I code to turn ideas into reality</p>
+	<Picture resize="down" alt="mcecode's avatar" {...avatarPng} />
+	<h1>Hi, I'm Matthew</h1>
+	<p>I code to turn ideas into reality</p>
 </section>
 
 <style lang="scss">
-  section {
-    display: grid;
-    grid-template-areas: "avatar" "title" "subtitle";
-    gap: v-size(2);
-    margin-bottom: v-const("section_spacing.medium");
-    text-align: center;
-  }
-  picture {
-    grid-area: avatar;
-    justify-self: center;
-  }
-  h1 {
-    grid-area: title;
-    margin-bottom: 0;
-  }
-  p {
-    grid-area: subtitle;
-    font-size: v-size(7);
-  }
+	section {
+		display: grid;
+		grid-template-areas: "avatar" "title" "subtitle";
+		gap: v-size(2);
+		margin-bottom: v-const("section_spacing.medium");
+		text-align: center;
+	}
+	picture {
+		grid-area: avatar;
+		justify-self: center;
+	}
+	h1 {
+		grid-area: title;
+		margin-bottom: 0;
+	}
+	p {
+		grid-area: subtitle;
+		font-size: v-size(7);
+	}
 
-  @include m-large {
-    section {
-      grid-template-areas: "avatar title" "avatar subtitle";
-      column-gap: v-size(10);
-      margin-bottom: v-const("section_spacing.large");
-      text-align: left;
-    }
-    h1 {
-      align-self: end;
-    }
-  }
+	@include m-large {
+		section {
+			grid-template-areas: "avatar title" "avatar subtitle";
+			column-gap: v-size(10);
+			margin-bottom: v-const("section_spacing.large");
+			text-align: left;
+		}
+		h1 {
+			align-self: end;
+		}
+	}
 </style>

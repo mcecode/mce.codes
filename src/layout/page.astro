@@ -9,26 +9,26 @@ type Props = { title: string };
 const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html class="no-js" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{title} | mcecode</title>
+		<title>{title} | mcecode</title>
 
-    <Fonts />
-  </head>
-  <body>
-    <Header />
-    <main>
-      <slot />
-    </main>
-    <Footer />
+		<Fonts />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<slot />
+		</main>
+		<Footer />
 
-    <script>
-      document.documentElement.className = "js";
-    </script>
-  </body>
+		<script>
+			document.documentElement.className = "js";
+		</script>
+	</body>
 </html>

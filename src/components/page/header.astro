@@ -2,308 +2,308 @@
 import "@styles/header.scss";
 
 import {
-  headerId,
-  logoId,
-  logoTitleId,
-  menuButtonId,
-  menuTemplateId,
-  menuTitleId,
-  modeButtonId,
-  modeMoonId,
-  modeSunId,
-  modeTemplateId,
-  modeTitleId,
-  navId,
-  navListId
+	headerId,
+	logoId,
+	logoTitleId,
+	menuButtonId,
+	menuTemplateId,
+	menuTitleId,
+	modeButtonId,
+	modeMoonId,
+	modeSunId,
+	modeTemplateId,
+	modeTitleId,
+	navId,
+	navListId,
 } from "@components/page/header.ids";
 ---
 
 <header id={headerId} class="header no-decor">
-  <a id={logoId} class="logo" href="/" aria-labelledby={logoTitleId}>
-    <svg
-      class="logo-svg"
-      width="124"
-      height="104"
-      viewBox="0 0 124 104"
-      fill="none"
-    >
-      <title id={logoTitleId}>mce.codes logo</title>
-      <path
-        d="M121.5 104V4M25.232 94.156l91.924-91.924M59.164 92c-.5 2.5 0 4 3.5 3.874 2.5-.374 2.439-.799 2-3.874"
-      ></path>
-      <path d="M6.768 2.232l91.924 91.924M2.5 104V4"></path>
-    </svg>
-  </a>
-  <nav id={navId}>
-    <template id={menuTemplateId}>
-      <button
-        id={menuButtonId}
-        class="menu no-button transition-transform"
-        aria-labelledby={menuTitleId}
-      >
-        <svg
-          class="menu-svg"
-          width="39"
-          height="34"
-          viewBox="0 0 39 34"
-          fill="none"
-        >
-          <title id={menuTitleId}>Menu</title>
-          <path
-            d="M25.864 6.737H2m35 12.632H2M37 32H2m35-20.526l-4.773-4.737L37 2"
-          ></path>
-        </svg>
-      </button>
-    </template>
-    <ul id={navListId} class="nav-list">
-      <li><a href="/">About</a></li>
-      <li><a href="/projects">Projects</a></li>
-      <li><a href="/notes">Notes</a></li>
-      <li><a href="/writings">Writings</a></li>
-    </ul>
-  </nav>
-  <template id={modeTemplateId}>
-    <button
-      id={modeButtonId}
-      class="mode no-button"
-      aria-labelledby={modeTitleId}
-    >
-      <svg
-        class="mode-svg"
-        width="56"
-        height="56"
-        viewBox="0 0 56 56"
-        fill="none"
-      >
-        <title id={modeTitleId}></title>
-        <g id={modeMoonId} class="mode-moon">
-          <path
-            d="M3 28c0 13.8 11.2 25 25 25 13.64-.012 25-12 25-24-4 2-16 6-24-2S25 7 27 3C15 3 3 14.36 3 28z"
-          ></path>
-        </g>
-        <g id={modeSunId} class="mode-sun">
-          <path
-            d="M28 40.037A12.04 12.04 0 0 0 40.037 28 12.04 12.04 0 0 0 28 15.963 12.04 12.04 0 0 0 15.963 28 12.04 12.04 0 0 0 28 40.037z"
-          ></path>
-          <path
-            d="M8.556 47.444l1.852-1.852m35.185 0l1.852 1.852m-1.852-37.037l1.852-1.852m-37.037 1.852L8.556 8.556M6.704 28H3m50 0h-3.704M28 49.296V53m0-50v3.704"
-          ></path>
-        </g>
-      </svg>
-    </button>
-  </template>
+	<a id={logoId} class="logo" href="/" aria-labelledby={logoTitleId}>
+		<svg
+			class="logo-svg"
+			width="124"
+			height="104"
+			viewBox="0 0 124 104"
+			fill="none"
+		>
+			<title id={logoTitleId}>mce.codes logo</title>
+			<path
+				d="M121.5 104V4M25.232 94.156l91.924-91.924M59.164 92c-.5 2.5 0 4 3.5 3.874 2.5-.374 2.439-.799 2-3.874"
+			></path>
+			<path d="M6.768 2.232l91.924 91.924M2.5 104V4"></path>
+		</svg>
+	</a>
+	<nav id={navId}>
+		<template id={menuTemplateId}>
+			<button
+				id={menuButtonId}
+				class="menu no-button transition-transform"
+				aria-labelledby={menuTitleId}
+			>
+				<svg
+					class="menu-svg"
+					width="39"
+					height="34"
+					viewBox="0 0 39 34"
+					fill="none"
+				>
+					<title id={menuTitleId}>Menu</title>
+					<path
+						d="M25.864 6.737H2m35 12.632H2M37 32H2m35-20.526l-4.773-4.737L37 2"
+					></path>
+				</svg>
+			</button>
+		</template>
+		<ul id={navListId} class="nav-list">
+			<li><a href="/">About</a></li>
+			<li><a href="/projects">Projects</a></li>
+			<li><a href="/notes">Notes</a></li>
+			<li><a href="/writings">Writings</a></li>
+		</ul>
+	</nav>
+	<template id={modeTemplateId}>
+		<button
+			id={modeButtonId}
+			class="mode no-button"
+			aria-labelledby={modeTitleId}
+		>
+			<svg
+				class="mode-svg"
+				width="56"
+				height="56"
+				viewBox="0 0 56 56"
+				fill="none"
+			>
+				<title id={modeTitleId}></title>
+				<g id={modeMoonId} class="mode-moon">
+					<path
+						d="M3 28c0 13.8 11.2 25 25 25 13.64-.012 25-12 25-24-4 2-16 6-24-2S25 7 27 3C15 3 3 14.36 3 28z"
+					></path>
+				</g>
+				<g id={modeSunId} class="mode-sun">
+					<path
+						d="M28 40.037A12.04 12.04 0 0 0 40.037 28 12.04 12.04 0 0 0 28 15.963 12.04 12.04 0 0 0 15.963 28 12.04 12.04 0 0 0 28 40.037z"
+					></path>
+					<path
+						d="M8.556 47.444l1.852-1.852m35.185 0l1.852 1.852m-1.852-37.037l1.852-1.852m-37.037 1.852L8.556 8.556M6.704 28H3m50 0h-3.704M28 49.296V53m0-50v3.704"
+					></path>
+				</g>
+			</svg>
+		</button>
+	</template>
 </header>
 
 <script>
-  import {
-    headerId,
-    logoId,
-    menuButtonId,
-    menuTemplateId,
-    modeButtonId,
-    modeMoonId,
-    modeSunId,
-    modeTemplateId,
-    modeTitleId,
-    navId,
-    navListId
-  } from "@components/page/header.ids";
-  import FocusTrap from "@lib/focus-trap";
-  import Store from "@lib/store.ts";
-  import { colors } from "@styles/data/colors.json";
+	import {
+		headerId,
+		logoId,
+		menuButtonId,
+		menuTemplateId,
+		modeButtonId,
+		modeMoonId,
+		modeSunId,
+		modeTemplateId,
+		modeTitleId,
+		navId,
+		navListId,
+	} from "@components/page/header.ids";
+	import FocusTrap from "@lib/focus-trap";
+	import Store from "@lib/store.ts";
+	import { colors } from "@styles/data/colors.json";
 
-  const header = document.getElementById(headerId) as HTMLElement;
+	const header = document.getElementById(headerId) as HTMLElement;
 
-  header.append(
-    (document.getElementById(modeTemplateId) as HTMLTemplateElement).content
-  );
-  (document.getElementById(navId) as HTMLElement).prepend(
-    (document.getElementById(menuTemplateId) as HTMLTemplateElement).content
-  );
+	header.append(
+		(document.getElementById(modeTemplateId) as HTMLTemplateElement).content,
+	);
+	(document.getElementById(navId) as HTMLElement).prepend(
+		(document.getElementById(menuTemplateId) as HTMLTemplateElement).content,
+	);
 
-  const logo = document.getElementById(logoId) as HTMLAnchorElement;
-  const navList = document.getElementById(navListId) as HTMLUListElement;
-  const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement;
-  const modeButton = document.getElementById(modeButtonId) as HTMLButtonElement;
-  const headerFocusTrap = new FocusTrap(header, logo, modeButton);
+	const logo = document.getElementById(logoId) as HTMLAnchorElement;
+	const navList = document.getElementById(navListId) as HTMLUListElement;
+	const menuButton = document.getElementById(menuButtonId) as HTMLButtonElement;
+	const modeButton = document.getElementById(modeButtonId) as HTMLButtonElement;
+	const headerFocusTrap = new FocusTrap(header, logo, modeButton);
 
-  menuButton.addEventListener("click", () => {
-    document.body.classList.toggle("open-nav");
-    header.classList.toggle("open-nav");
-    menuButton.classList.toggle("rotate-left");
+	menuButton.addEventListener("click", () => {
+		document.body.classList.toggle("open-nav");
+		header.classList.toggle("open-nav");
+		menuButton.classList.toggle("rotate-left");
 
-    navList.classList.toggle("appear");
-    modeButton.classList.toggle("appear");
+		navList.classList.toggle("appear");
+		modeButton.classList.toggle("appear");
 
-    if (navList.classList.contains("appear")) {
-      navList.classList.add("open-nav");
-      modeButton.classList.add("open-nav");
-    } else {
-      // This prevents a scrollbar from appearing while the header expands and
-      // contracts.
-      header.style.overflowY = "hidden";
+		if (navList.classList.contains("appear")) {
+			navList.classList.add("open-nav");
+			modeButton.classList.add("open-nav");
+		} else {
+			// This prevents a scrollbar from appearing while the header expands and
+			// contracts.
+			header.style.overflowY = "hidden";
 
-      // 'setTimeout' is needed because removing 'appear' and adding 'vanish'
-      // at the same time negates the 'vanish' animation.
-      setTimeout(() => {
-        navList.classList.add("vanish");
-        modeButton.classList.add("vanish");
-      });
-    }
+			// 'setTimeout' is needed because removing 'appear' and adding 'vanish'
+			// at the same time negates the 'vanish' animation.
+			setTimeout(() => {
+				navList.classList.add("vanish");
+				modeButton.classList.add("vanish");
+			});
+		}
 
-    headerFocusTrap.toggleLock();
-  });
+		headerFocusTrap.toggleLock();
+	});
 
-  // 'navList' and 'modeButton' animations end at the same time so put
-  // 'animationend' handling on only one of them.
-  navList.addEventListener("animationend", ({ target }) => {
-    if ((target as HTMLUListElement).classList.contains("appear")) {
-      header.style.overflowY = "auto";
-    } else {
-      navList.classList.remove("open-nav");
-      modeButton.classList.remove("open-nav");
-      navList.classList.remove("vanish");
-      modeButton.classList.remove("vanish");
-    }
-  });
+	// 'navList' and 'modeButton' animations end at the same time so put
+	// 'animationend' handling on only one of them.
+	navList.addEventListener("animationend", ({ target }) => {
+		if ((target as HTMLUListElement).classList.contains("appear")) {
+			header.style.overflowY = "auto";
+		} else {
+			navList.classList.remove("open-nav");
+			modeButton.classList.remove("open-nav");
+			navList.classList.remove("vanish");
+			modeButton.classList.remove("vanish");
+		}
+	});
 
-  const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");
-  const rootStyle = document.documentElement.style;
-  const article = document.querySelector("main article") as HTMLElement | null;
-  const modeTitle = document.getElementById(modeTitleId) as HTMLTitleElement & {
-    // This type is a bit inaccurate because it could also be 'null', but either
-    // 'setModeTitleBasedOnMedia' or 'setMode' are called right away at page
-    // load, so this type is accurate enough.
-    textContent: "Light mode" | "Dark mode";
-  };
-  const modeMoon = document.getElementById(
-    modeMoonId
-  ) as unknown as SVGGElement;
-  const modeSun = document.getElementById(modeSunId) as unknown as SVGGElement;
+	const darkModeMedia = matchMedia("(prefers-color-scheme: dark)");
+	const rootStyle = document.documentElement.style;
+	const article = document.querySelector("main article") as HTMLElement | null;
+	const modeTitle = document.getElementById(modeTitleId) as HTMLTitleElement & {
+		// This type is a bit inaccurate because it could also be 'null', but either
+		// 'setModeTitleBasedOnMedia' or 'setMode' are called right away at page
+		// load, so this type is accurate enough.
+		textContent: "Light mode" | "Dark mode";
+	};
+	const modeMoon = document.getElementById(
+		modeMoonId,
+	) as unknown as SVGGElement;
+	const modeSun = document.getElementById(modeSunId) as unknown as SVGGElement;
 
-  type Mode = "light" | "dark";
-  const modeStore = new Store<Mode>("mode");
+	type Mode = "light" | "dark";
+	const modeStore = new Store<Mode>("mode");
 
-  darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
-  function setModeTitleBasedOnMedia() {
-    if (darkModeMedia.matches) {
-      modeTitle.textContent = "Light mode";
-      return;
-    }
+	darkModeMedia.addEventListener("change", setModeTitleBasedOnMedia);
+	function setModeTitleBasedOnMedia() {
+		if (darkModeMedia.matches) {
+			modeTitle.textContent = "Light mode";
+			return;
+		}
 
-    modeTitle.textContent = "Dark mode";
-  }
+		modeTitle.textContent = "Dark mode";
+	}
 
-  modeButton.addEventListener("click", () => {
-    setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
-  });
-  function setMode(mode: Mode, animateModeSvg = true) {
-    switch (mode) {
-      case "light": {
-        rootStyle.setProperty("--c-foreground", colors.black);
-        rootStyle.setProperty("--c-background", colors.white);
-        rootStyle.setProperty("--c-accent-1", colors.grayDark);
-        rootStyle.setProperty("--c-accent-2", colors.grayLight);
+	modeButton.addEventListener("click", () => {
+		setMode(modeTitle.textContent === "Light mode" ? "light" : "dark");
+	});
+	function setMode(mode: Mode, animateModeSvg = true) {
+		switch (mode) {
+			case "light": {
+				rootStyle.setProperty("--c-foreground", colors.black);
+				rootStyle.setProperty("--c-background", colors.white);
+				rootStyle.setProperty("--c-accent-1", colors.grayDark);
+				rootStyle.setProperty("--c-accent-2", colors.grayLight);
 
-        if (article) {
-          article.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
-            pre.style.setProperty("background-color", "var(--c-code-light-bg)");
-            pre.style.setProperty("color", "var(--c-code-light)");
-          });
-          article
-            .querySelectorAll<HTMLSpanElement>(".block-code-token")
-            .forEach((span) => {
-              span.style.setProperty("color", "var(--c-code-light)");
-            });
-        }
+				if (article) {
+					article.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
+						pre.style.setProperty("background-color", "var(--c-code-light-bg)");
+						pre.style.setProperty("color", "var(--c-code-light)");
+					});
+					article
+						.querySelectorAll<HTMLSpanElement>(".block-code-token")
+						.forEach((span) => {
+							span.style.setProperty("color", "var(--c-code-light)");
+						});
+				}
 
-        if (animateModeSvg) {
-          modeMoon.classList.add("rotate-appear");
-          modeSun.classList.add("rotate-vanish");
-        } else {
-          modeMoon.style.opacity = "1";
-          modeSun.style.opacity = "0";
-        }
+				if (animateModeSvg) {
+					modeMoon.classList.add("rotate-appear");
+					modeSun.classList.add("rotate-vanish");
+				} else {
+					modeMoon.style.opacity = "1";
+					modeSun.style.opacity = "0";
+				}
 
-        modeTitle.textContent = "Dark mode";
-        modeStore.set("light");
-        break;
-      }
-      case "dark": {
-        rootStyle.setProperty("--c-foreground", colors.white);
-        rootStyle.setProperty("--c-background", colors.black);
-        rootStyle.setProperty("--c-accent-1", colors.grayLight);
-        rootStyle.setProperty("--c-accent-2", colors.grayDark);
+				modeTitle.textContent = "Dark mode";
+				modeStore.set("light");
+				break;
+			}
+			case "dark": {
+				rootStyle.setProperty("--c-foreground", colors.white);
+				rootStyle.setProperty("--c-background", colors.black);
+				rootStyle.setProperty("--c-accent-1", colors.grayLight);
+				rootStyle.setProperty("--c-accent-2", colors.grayDark);
 
-        if (article) {
-          article.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
-            pre.style.setProperty("background-color", "var(--c-code-dark-bg)");
-            pre.style.setProperty("color", "var(--c-code-dark)");
-          });
-          article
-            .querySelectorAll<HTMLSpanElement>(".block-code-token")
-            .forEach((span) => {
-              span.style.setProperty("color", "var(--c-code-dark)");
-            });
-        }
+				if (article) {
+					article.querySelectorAll<HTMLPreElement>("pre").forEach((pre) => {
+						pre.style.setProperty("background-color", "var(--c-code-dark-bg)");
+						pre.style.setProperty("color", "var(--c-code-dark)");
+					});
+					article
+						.querySelectorAll<HTMLSpanElement>(".block-code-token")
+						.forEach((span) => {
+							span.style.setProperty("color", "var(--c-code-dark)");
+						});
+				}
 
-        if (animateModeSvg) {
-          modeMoon.classList.add("rotate-vanish");
-          modeSun.classList.add("rotate-appear");
-        } else {
-          modeMoon.style.opacity = "0";
-          modeSun.style.opacity = "1";
-        }
+				if (animateModeSvg) {
+					modeMoon.classList.add("rotate-vanish");
+					modeSun.classList.add("rotate-appear");
+				} else {
+					modeMoon.style.opacity = "0";
+					modeSun.style.opacity = "1";
+				}
 
-        modeTitle.textContent = "Light mode";
-        modeStore.set("dark");
-        break;
-      }
-    }
+				modeTitle.textContent = "Light mode";
+				modeStore.set("dark");
+				break;
+			}
+		}
 
-    // Once the user has set a mode preference, follow that instead of the
-    // system default.
-    darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
-  }
+		// Once the user has set a mode preference, follow that instead of the
+		// system default.
+		darkModeMedia.removeEventListener("change", setModeTitleBasedOnMedia);
+	}
 
-  // 'modeMoon' and 'modeSun' animations end at the same time so put
-  // 'animationend' handling on only one of them.
-  modeMoon.addEventListener("animationend", () => {
-    const storedMode = modeStore.get();
+	// 'modeMoon' and 'modeSun' animations end at the same time so put
+	// 'animationend' handling on only one of them.
+	modeMoon.addEventListener("animationend", () => {
+		const storedMode = modeStore.get();
 
-    if (storedMode === null) {
-      return;
-    }
+		if (storedMode === null) {
+			return;
+		}
 
-    switch (storedMode) {
-      case "light": {
-        modeMoon.style.opacity = "1";
-        modeSun.style.opacity = "0";
+		switch (storedMode) {
+			case "light": {
+				modeMoon.style.opacity = "1";
+				modeSun.style.opacity = "0";
 
-        modeMoon.classList.remove("rotate-appear");
-        modeSun.classList.remove("rotate-vanish");
-        break;
-      }
-      case "dark": {
-        modeMoon.style.opacity = "0";
-        modeSun.style.opacity = "1";
+				modeMoon.classList.remove("rotate-appear");
+				modeSun.classList.remove("rotate-vanish");
+				break;
+			}
+			case "dark": {
+				modeMoon.style.opacity = "0";
+				modeSun.style.opacity = "1";
 
-        modeMoon.classList.remove("rotate-vanish");
-        modeSun.classList.remove("rotate-appear");
-        break;
-      }
-    }
-  });
+				modeMoon.classList.remove("rotate-vanish");
+				modeSun.classList.remove("rotate-appear");
+				break;
+			}
+		}
+	});
 
-  addEventListener("DOMContentLoaded", () => {
-    const storedMode = modeStore.get();
+	addEventListener("DOMContentLoaded", () => {
+		const storedMode = modeStore.get();
 
-    if (storedMode === null) {
-      setModeTitleBasedOnMedia();
-      return;
-    }
+		if (storedMode === null) {
+			setModeTitleBasedOnMedia();
+			return;
+		}
 
-    // 'modeMoon' and 'modeSun' should not animate at initial page load.
-    setMode(storedMode, false);
-  });
+		// 'modeMoon' and 'modeSun' should not animate at initial page load.
+		setMode(storedMode, false);
+	});
 </script>

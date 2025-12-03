@@ -2,37 +2,37 @@
 import CreatedUpdatedTime from "./created-updated-time.astro";
 
 type Props = {
-  title: string;
-  link: string;
-  dateCreated: Date;
-  dateUpdated: Date;
+	title: string;
+	link: string;
+	dateCreated: Date;
+	dateUpdated: Date;
 };
 const { title, link, dateCreated, dateUpdated } = Astro.props;
 ---
 
 <li>
-  <p><a href={link}>{title}</a></p>
-  <CreatedUpdatedTime
-    class="small-text"
-    created={dateCreated}
-    updated={dateUpdated}
-  />
+	<p><a href={link}>{title}</a></p>
+	<CreatedUpdatedTime
+		class="small-text"
+		created={dateCreated}
+		updated={dateUpdated}
+	/>
 </li>
 
 <style lang="scss">
-  li {
-    margin-bottom: v-const("section_spacing.xsmall");
-  }
-  li:last-child {
-    margin-bottom: v-const("section_spacing.medium");
-  }
-  p:last-child {
-    font-style: italic;
-  }
+	li {
+		margin-bottom: v-const("section_spacing.xsmall");
+	}
+	li:last-child {
+		margin-bottom: v-const("section_spacing.medium");
+	}
+	p:last-child {
+		font-style: italic;
+	}
 
-  @include m-medium {
-    li:last-child {
-      margin-bottom: v-const("section_spacing.large");
-    }
-  }
+	@include m-medium {
+		li:last-child {
+			margin-bottom: v-const("section_spacing.large");
+		}
+	}
 </style>

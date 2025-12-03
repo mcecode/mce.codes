@@ -2,15 +2,15 @@
 @use "sass:string";
 
 @function deep-get($map, $key) {
-  $value: $map;
+	$value: $map;
 
-  @each $part in string.split($key, ".") {
-    $value: map.get($value, $part);
+	@each $part in string.split($key, ".") {
+		$value: map.get($value, $part);
 
-    @if $value == null {
-      @error "Unknown key '#{$part}'";
-    }
-  }
+		@if $value == null {
+			@error "Unknown key '#{$part}'";
+		}
+	}
 
-  @return $value;
+	@return $value;
 }

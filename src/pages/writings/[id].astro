@@ -8,10 +8,10 @@ import Article from "@layout/article.astro";
 import Page from "@layout/page.astro";
 
 export async function getStaticPaths() {
-  return (await getCollection("writings")).map((writing) => ({
-    params: { id: writing.id },
-    props: { writing }
-  }));
+	return (await getCollection("writings")).map((writing) => ({
+		params: { id: writing.id },
+		props: { writing },
+	}));
 }
 
 type Props = { writing: CollectionEntry<"writings"> };
@@ -21,13 +21,13 @@ const { title, dateCreated, dateUpdated } = writing.data;
 ---
 
 <Page {title}>
-  <Article>
-    <h1 class="smaller-spacing">{title}</h1>
-    <CreatedUpdatedTime
-      class="small-text larger-spacing"
-      created={dateCreated}
-      updated={dateUpdated}
-    />
-    <Content />
-  </Article>
+	<Article>
+		<h1 class="smaller-spacing">{title}</h1>
+		<CreatedUpdatedTime
+			class="small-text larger-spacing"
+			created={dateCreated}
+			updated={dateUpdated}
+		/>
+		<Content />
+	</Article>
 </Page>

@@ -8,31 +8,31 @@
 @use "json:colors" as *;
 
 @function color($color) {
-  @return string.unquote(lib.deep-get($colors, $color));
+	@return string.unquote(lib.deep-get($colors, $color));
 }
 
 // Fonts
 
 $_fonts: (
-  "title": (
-    "Raleway",
-    sans-serif
-  ),
-  "body": (
-    "Inter",
-    sans-serif,
-    "Segoe UI Emoji",
-    "Apple Color Emoji",
-    "Noto Color Emoji"
-  ),
-  "code": (
-    "Kode Mono",
-    monospace
-  )
+	"title": (
+		"Raleway",
+		sans-serif,
+	),
+	"body": (
+		"Inter",
+		sans-serif,
+		"Segoe UI Emoji",
+		"Apple Color Emoji",
+		"Noto Color Emoji",
+	),
+	"code": (
+		"Kode Mono",
+		monospace,
+	),
 );
 
 @function font($font) {
-  @return lib.deep-get($_fonts, $font);
+	@return lib.deep-get($_fonts, $font);
 }
 
 // Sizes
@@ -40,29 +40,29 @@ $_fonts: (
 $_sizes: ();
 
 @for $i from 1 through 20 {
-  $_sizes: list.append($_sizes, $i * 0.25);
+	$_sizes: list.append($_sizes, $i * 0.25);
 }
 
 $_units: (
-  "rem": 0rem,
-  "em": 0em
+	"rem": 0rem,
+	"em": 0em,
 );
 
 @function size($size, $unit: "rem") {
-  @return list.nth($_sizes, $size) + lib.deep-get($_units, $unit);
+	@return list.nth($_sizes, $size) + lib.deep-get($_units, $unit);
 }
 
 // Constants
 
 $_consts: (
-  "section_spacing": (
-    "xsmall": size(5),
-    "small": size(10),
-    "medium": size(15),
-    "large": size(20)
-  )
+	"section_spacing": (
+		"xsmall": size(5),
+		"small": size(10),
+		"medium": size(15),
+		"large": size(20),
+	),
 );
 
 @function const($const) {
-  @return lib.deep-get($_consts, $const);
+	@return lib.deep-get($_consts, $const);
 }

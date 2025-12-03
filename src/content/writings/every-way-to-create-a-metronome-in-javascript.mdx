@@ -11,137 +11,218 @@ import kidGivingThumbsUpGif from "@assets/kid-giving-thumbs-up.gif";
 import pepeSilvaJpg from "@assets/pepe-silva.jpg";
 import wompWompJpg from "@assets/womp-womp.jpg";
 
-Okay, it's not _every way_. A more accurate title would be "every viable way I could find and think of to create metronomes in JavaScript using only browser APIs", but that wouldn't sound as nice so we're sticking with what we got.
+Okay, it's not _every way_. A more accurate title would be "every viable way I
+could find and think of to create metronomes in JavaScript using only browser
+APIs", but that wouldn't sound as nice so we're sticking with what we got.
 
-Anyway, much like [Grant James](https://grantjam.es/creating-a-simple-metronome-using-javascript-and-the-web-audio-api), for one reason or another, I decided that I would make my own metronome and thought, "This will be easy!" Oh how wrong we were. Unlike him though, who sanely stopped after he was able to make a metronome, I ended up going down that metronome rabbit hole, so down that rabbit hole I'll take you in this post.
+Anyway, much like
+[Grant James](https://grantjam.es/creating-a-simple-metronome-using-javascript-and-the-web-audio-api),
+for one reason or another, I decided that I would make my own metronome and
+thought, "This will be easy!" Oh how wrong we were. Unlike him though, who
+sanely stopped after he was able to make a metronome, I ended up going down that
+metronome rabbit hole, so down that rabbit hole I'll take you in this post.
 
-You can check out the full source code of the different metronome implementations [on GitHub](https://github.com/mcecode/metronomes) and you can try them out [in this demo](https://metronomes.mce.codes). Note that the code snippets below are only concerned with setting up and starting a metronome and are mostly written in procedural JavaScript, while the code in GitHub handles more use cases and is written in object-oriented TypeScript. If you want to try your hand at making your own metronome, you can consider checking out the full source code and the resources I'll be linking along the way as your assignment, but just following what's written here would probably take you most of the way there.
+You can check out the full source code of the different metronome
+implementations [on GitHub](https://github.com/mcecode/metronomes) and you can
+try them out [in this demo](https://metronomes.mce.codes). Note that the code
+snippets below are only concerned with setting up and starting a metronome and
+are mostly written in procedural JavaScript, while the code in GitHub handles
+more use cases and is written in object-oriented TypeScript. If you want to try
+your hand at making your own metronome, you can consider checking out the full
+source code and the resources I'll be linking along the way as your assignment,
+but just following what's written here would probably take you most of the way
+there.
 
-With that behind us, buckle up, strap in, and huddle down, as we liftoff, takeoff, and blastoff into this metronome journey.
+With that behind us, buckle up, strap in, and huddle down, as we liftoff,
+takeoff, and blastoff into this metronome journey.
 
 ## JavaScript Timers
 
-Our journey starts with good ol' `setTimeout` and `setInterval` and why we won't straight up be using them like this:
+Our journey starts with good ol' `setTimeout` and `setInterval` and why we won't
+straight up be using them like this:
 
 ```javascript
 const audio = new Audio("/path/to/audio/file");
 setInterval(() => {
-  audio.currentTime = 0;
-  audio.play();
+	audio.currentTime = 0;
+	audio.play();
 }, 1000);
 ```
 
-If you've ever read up on how the [event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop) and [threading](https://developer.mozilla.org/en-US/docs/Glossary/Thread) work in JavaScript, you'll know that those methods aren't very accurate because before the callback can be called, the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread) first needs to finish everything that it's queued to handle, which could range from adjusting the page layout to handling different events to garbage collection because that's just how JavaScript's single-threaded event loop works. So even if the timer is set to 1000 in the snippet above, the callback won't always necessarily run every second. In fact, due to everything that the main thread is handling in a regular website or web app, you should expect that it will run at least a little later than every second.
+If you've ever read up on how the
+[event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop)
+and [threading](https://developer.mozilla.org/en-US/docs/Glossary/Thread) work
+in JavaScript, you'll know that those methods aren't very accurate because
+before the callback can be called, the
+[main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread)
+first needs to finish everything that it's queued to handle, which could range
+from adjusting the page layout to handling different events to garbage
+collection because that's just how JavaScript's single-threaded event loop
+works. So even if the timer is set to 1000 in the snippet above, the callback
+won't always necessarily run every second. In fact, due to everything that the
+main thread is handling in a regular website or web app, you should expect that
+it will run at least a little later than every second.
 
-Therefore, that second parameter indicates not an exact time, but a minimum time that the callback will be called. Depending on how busy the main thread is, firing the callback could be delayed from a few milliseconds to tens of milliseconds, and though that doesn't sound all that bad, it will add up over time. That drift will end up causing the metronome to be very out of sync with the set BPM even after just a minute.
+Therefore, that second parameter indicates not an exact time, but a minimum time
+that the callback will be called. Depending on how busy the main thread is,
+firing the callback could be delayed from a few milliseconds to tens of
+milliseconds, and though that doesn't sound all that bad, it will add up over
+time. That drift will end up causing the metronome to be very out of sync with
+the set BPM even after just a minute.
 
-The question now is, how do we account for and compensate for that drift so that we can use these timers to make our metronome?
+The question now is, how do we account for and compensate for that drift so that
+we can use these timers to make our metronome?
 
 ## Custom Timer
 
-This idea came from [Music and Coding's YouTube videos](https://www.youtube.com/playlist?list=PLXAhCH9FJ8zU2lR4ZvJGianiyVJlqm0z0). You can find his code [here](https://github.com/musicandcode/Metronome).
+This idea came from
+[Music and Coding's YouTube videos](https://www.youtube.com/playlist?list=PLXAhCH9FJ8zU2lR4ZvJGianiyVJlqm0z0).
+You can find his code [here](https://github.com/musicandcode/Metronome).
 
-One way to account for drift is by making a self-correcting interval timer that will internally use `setTimeout`. Let's set up the constructor and properties first:
-
-```javascript
-class SelfCorrectingTimer {
-  #timeoutId = 0;
-  #nextCallbackFireTime = 0;
-
-  #timeInterval = 0;
-  #callback = () => {};
-  constructor(timeInterval, callback) {
-    this.#timeInterval = timeInterval;
-    this.#callback = callback;
-  }
-
-  // ...
-}
-```
-
-`#timeInterval` indicates every when a tick happens and `#callback` is what's called every tick. `#nextCallbackFireTime` together with [`performance.now`](https://developer.mozilla.org/en-US/docs/Web/API/Performance/now) will be used to track and correct the drift. Next, we have the `start` method:
+One way to account for drift is by making a self-correcting interval timer that
+will internally use `setTimeout`. Let's set up the constructor and properties
+first:
 
 ```javascript
 class SelfCorrectingTimer {
-  // ...
+	#timeoutId = 0;
+	#nextCallbackFireTime = 0;
 
-  start() {
-    this.#callback();
-    this.#timeoutId = setTimeout(this.#internalCallback, this.#timeInterval);
-    this.#nextCallbackFireTime = performance.now() + this.#timeInterval;
-  }
+	#timeInterval = 0;
+	#callback = () => {};
+	constructor(timeInterval, callback) {
+		this.#timeInterval = timeInterval;
+		this.#callback = callback;
+	}
 
-  // ...
+	// ...
 }
 ```
 
-We call `#callback` right away as the first tick and track when the next tick should be using `#nextCallbackFireTime`. When setting the first timeout, instead of setting its callback to `#callback`, we set it to `#internalCallback`, which is where accounting for drift happens:
+`#timeInterval` indicates every when a tick happens and `#callback` is what's
+called every tick. `#nextCallbackFireTime` together with
+[`performance.now`](https://developer.mozilla.org/en-US/docs/Web/API/Performance/now)
+will be used to track and correct the drift. Next, we have the `start` method:
 
 ```javascript
 class SelfCorrectingTimer {
-  // ...
+	// ...
 
-  #internalCallback = () => {
-    this.#callback();
+	start() {
+		this.#callback();
+		this.#timeoutId = setTimeout(this.#internalCallback, this.#timeInterval);
+		this.#nextCallbackFireTime = performance.now() + this.#timeInterval;
+	}
 
-    const drift = performance.now() - this.#nextCallbackFireTime;
-    this.#timeoutId = setTimeout(
-      this.#internalCallback,
-      this.#timeInterval - drift
-    );
-
-    this.#nextCallbackFireTime += this.#timeInterval;
-  };
+	// ...
 }
 ```
 
-Here, like on `start`, we call `#callback` and track `#nextCallbackFireTime`, but when we set the next timeout, we compensate for the drift by subtracting it from `#timeInterval`. This allows the timer to course-correct every tick by starting the next tick earlier based on how late the previous tick was.
+We call `#callback` right away as the first tick and track when the next tick
+should be using `#nextCallbackFireTime`. When setting the first timeout, instead
+of setting its callback to `#callback`, we set it to `#internalCallback`, which
+is where accounting for drift happens:
 
-Of course, as is, all we currently have is a general-purpose timer. To use it as a metronome, we need to instantiate it with a BPM in milliseconds as the time interval and a callback that plays some audio, then start it on user interaction:
+```javascript
+class SelfCorrectingTimer {
+	// ...
+
+	#internalCallback = () => {
+		this.#callback();
+
+		const drift = performance.now() - this.#nextCallbackFireTime;
+		this.#timeoutId = setTimeout(
+			this.#internalCallback,
+			this.#timeInterval - drift,
+		);
+
+		this.#nextCallbackFireTime += this.#timeInterval;
+	};
+}
+```
+
+Here, like on `start`, we call `#callback` and track `#nextCallbackFireTime`,
+but when we set the next timeout, we compensate for the drift by subtracting it
+from `#timeInterval`. This allows the timer to course-correct every tick by
+starting the next tick earlier based on how late the previous tick was.
+
+Of course, as is, all we currently have is a general-purpose timer. To use it as
+a metronome, we need to instantiate it with a BPM in milliseconds as the time
+interval and a callback that plays some audio, then start it on user
+interaction:
 
 ```javascript
 const audio = new Audio("/path/to/audio/file");
 const timer = new SelfCorrectingTimer(60_000 / BPM, () => {
-  audio.currentTime = 0;
-  audio.play();
+	audio.currentTime = 0;
+	audio.play();
 });
 
 playButton.onclick = () => {
-  timer.start();
+	timer.start();
 };
 ```
 
-Great! Now we have our metronome. There's a problem though, even if the timer doesn't drift over time, [jittering](https://focusrite.com/articles/what-is-jitter) may occur and it can be very noticeable, especially on higher BPMs. This occurs because the timer's ticks aren't guaranteed to fire exactly when it's set to, they may fire earlier, when compensating for drift, or later, when the main thread is busy. The audio may also end up overlapping with each other. Not a great experience, especially for a metronome that's supposed to help someone get the right beat when playing an instrument or producing music.
+Great! Now we have our metronome. There's a problem though, even if the timer
+doesn't drift over time,
+[jittering](https://focusrite.com/articles/what-is-jitter) may occur and it can
+be very noticeable, especially on higher BPMs. This occurs because the timer's
+ticks aren't guaranteed to fire exactly when it's set to, they may fire earlier,
+when compensating for drift, or later, when the main thread is busy. The audio
+may also end up overlapping with each other. Not a great experience, especially
+for a metronome that's supposed to help someone get the right beat when playing
+an instrument or producing music.
 
 We were able to account for timer drift, but now we got jittering.
 
 <a href="https://knowyourmeme.com/photos/1388290-womp-womp-slang">
-  <Picture
-    alt="Michael Scott from The Office; Womp womp meme"
-    {...wompWompJpg}
-  />
+	<Picture
+		alt="Michael Scott from The Office; Womp womp meme"
+		{...wompWompJpg}
+	/>
 </a>
 
-Our custom timer's accuracy was limited because it's running on the main thread. What about running it off the main thread? Will that solve our problems?
+Our custom timer's accuracy was limited because it's running on the main thread.
+What about running it off the main thread? Will that solve our problems?
 
 ## Worker Timer
 
-This idea came from [Monica Dinculescu's article](https://meowni.ca/posts/metronomes). You can find her code [here](https://glitch.com/edit/#!/metronomes).
+This idea came from
+[Monica Dinculescu's article](https://meowni.ca/posts/metronomes). You can find
+her code [here](https://glitch.com/edit/#!/metronomes).
 
-To run a timer off the main thread, we're going to have to use the [Web Workers API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), specifically, we're going to make and run a [dedicated worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker). Here's what a worker that functions as a timer could look like:
+To run a timer off the main thread, we're going to have to use the
+[Web Workers API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API),
+specifically, we're going to make and run a
+[dedicated worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker).
+Here's what a worker that functions as a timer could look like:
 
 ```javascript
 // worker.js
 
 onmessage = (e) => {
-  const timeInterval = e.data;
-  setInterval(() => {
-    postMessage("tick");
-  }, timeInterval);
+	const timeInterval = e.data;
+	setInterval(() => {
+		postMessage("tick");
+	}, timeInterval);
 };
 ```
 
-We set a global [`onmessage`](https://developer.mozilla.org/en-US/docs/Web/API/DedicatedWorkerGlobalScope/message_event) handler that expects the time interval as data. Once it fires, we call `setInterval` to send ticks back to the main thread. It's okay to use `setInterval` directly in this context because it's running on a separate thread that's dedicated to only doing a few tasks. Namely, handling the `message` event, running the timer, and sending messages back to the main thread. It doesn't need to worry about other events, scrolling, or layout shifts. Of course, we can use the custom timer we previously made here, but the drift is little enough that we probably don't need to do that. Now, to use this worker, we need to pass its path to the [`Worker`](https://developer.mozilla.org/en-US/docs/Web/API/Worker/Worker) constructor, play some audio every time a tick message comes, and on user interaction, start the timer by sending a message containing a BPM in milliseconds as our time interval, like so:
+We set a global
+[`onmessage`](https://developer.mozilla.org/en-US/docs/Web/API/DedicatedWorkerGlobalScope/message_event)
+handler that expects the time interval as data. Once it fires, we call
+`setInterval` to send ticks back to the main thread. It's okay to use
+`setInterval` directly in this context because it's running on a separate thread
+that's dedicated to only doing a few tasks. Namely, handling the `message`
+event, running the timer, and sending messages back to the main thread. It
+doesn't need to worry about other events, scrolling, or layout shifts. Of
+course, we can use the custom timer we previously made here, but the drift is
+little enough that we probably don't need to do that. Now, to use this worker,
+we need to pass its path to the
+[`Worker`](https://developer.mozilla.org/en-US/docs/Web/API/Worker/Worker)
+constructor, play some audio every time a tick message comes, and on user
+interaction, start the timer by sending a message containing a BPM in
+milliseconds as our time interval, like so:
 
 ```javascript
 // metronome.js
@@ -149,97 +230,165 @@ We set a global [`onmessage`](https://developer.mozilla.org/en-US/docs/Web/API/D
 const audio = new Audio("/path/to/audio/file");
 const worker = new Worker("/path/to/worker.js");
 worker.onmessage = (e) => {
-  if (e.data === "tick") {
-    audio.currentTime = 0;
-    audio.play();
-  }
+	if (e.data === "tick") {
+		audio.currentTime = 0;
+		audio.play();
+	}
 };
 
 playButton.onclick = () => {
-  worker.postMessage(60_000 / BPM);
+	worker.postMessage(60_000 / BPM);
 };
 ```
 
-There you have it. So we're good, right? No more jittering? Well... not really. With this approach, the timer is more accurate than when it's running on the main thread and we don't get ticks firing earlier than intended since we're not compensating for drift. However, we still tend to get jitters on faster BPMs. Remember, even if the timer is off the main thread, controlling the audio still happens in the main thread. The time it takes to pass and process the message from the worker thread to the main thread as well as all the tasks the main thread needs to handle can delay the playing of the audio, sometimes by a little, sometimes by a lot. Similar to the custom timer solution above, this can cause the audio to overlap with each other.
+There you have it. So we're good, right? No more jittering? Well... not really.
+With this approach, the timer is more accurate than when it's running on the
+main thread and we don't get ticks firing earlier than intended since we're not
+compensating for drift. However, we still tend to get jitters on faster BPMs.
+Remember, even if the timer is off the main thread, controlling the audio still
+happens in the main thread. The time it takes to pass and process the message
+from the worker thread to the main thread as well as all the tasks the main
+thread needs to handle can delay the playing of the audio, sometimes by a
+little, sometimes by a lot. Similar to the custom timer solution above, this can
+cause the audio to overlap with each other.
 
-Dang it! Okay, if putting the timer off the main thread doesn't work, what about doing the opposite and putting the audio off the main thread? Will that work?
+Dang it! Okay, if putting the timer off the main thread doesn't work, what about
+doing the opposite and putting the audio off the main thread? Will that work?
 
 ## Lookahead Timer
 
-This idea came from [Chris Wilson's article](https://web.dev/articles/audio-scheduling). You can find his code [here](https://github.com/cwilso/metronome).
+This idea came from
+[Chris Wilson's article](https://web.dev/articles/audio-scheduling). You can
+find his code [here](https://github.com/cwilso/metronome).
 
-We can't create an `audio` element inside a worker and play sound that way because workers don't have access to the DOM. So we'll need another way, we'll need to use the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) since that plays audio in its own dedicated thread. If you're not familiar with it, I suggest reading up a little on it like [how to use it](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_Web_Audio_API) and [the basic concepts behind it](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Basic_concepts_behind_Web_Audio_API) because I'll only be glossing over how it works and focus more on how I'm using it, lest I repeat the whole MDN documentation here. Additionally, we'll be using the timers we've been using until now differently since [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext) has its own very precise clock. We'll be tracking that and basing the audio scheduling on it. Let's start with this:
+We can't create an `audio` element inside a worker and play sound that way
+because workers don't have access to the DOM. So we'll need another way, we'll
+need to use the
+[Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+since that plays audio in its own dedicated thread. If you're not familiar with
+it, I suggest reading up a little on it like
+[how to use it](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_Web_Audio_API)
+and
+[the basic concepts behind it](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Basic_concepts_behind_Web_Audio_API)
+because I'll only be glossing over how it works and focus more on how I'm using
+it, lest I repeat the whole MDN documentation here. Additionally, we'll be using
+the timers we've been using until now differently since
+[`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)
+has its own very precise clock. We'll be tracking that and basing the audio
+scheduling on it. Let's start with this:
 
 ```javascript
 const audioContext = new AudioContext();
 let nextOscillationTime = 0;
 ```
 
-An `AudioContext` instance and the declaration of `nextOscillationTime`, which we'll be using to track when the next tick will be based on `audioContext`'s clock. Now, let's move on to the `scheduleTicks` function:
+An `AudioContext` instance and the declaration of `nextOscillationTime`, which
+we'll be using to track when the next tick will be based on `audioContext`'s
+clock. Now, let's move on to the `scheduleTicks` function:
 
 ```javascript
 function scheduleTicks() {
-  while (nextOscillationTime < audioContext.currentTime + 0.1) {
-    scheduleOscillation();
-    nextOscillationTime += 60 / BPM;
-  }
+	while (nextOscillationTime < audioContext.currentTime + 0.1) {
+		scheduleOscillation();
+		nextOscillationTime += 60 / BPM;
+	}
 }
 ```
 
-This schedules all the ticks that should happen within the next 100 milliseconds by scheduling oscillations ahead of time and incrementing `nextOscillationTime` with a BPM in seconds since `AudioContext`'s clock is in seconds, not milliseconds. Next, let's see what's inside that `scheduleOscillation` function:
+This schedules all the ticks that should happen within the next 100 milliseconds
+by scheduling oscillations ahead of time and incrementing `nextOscillationTime`
+with a BPM in seconds since `AudioContext`'s clock is in seconds, not
+milliseconds. Next, let's see what's inside that `scheduleOscillation` function:
 
 ```javascript
 function scheduleOscillation() {
-  const oscillatorNode = new OscillatorNode(audioContext, {
-    frequency: 330
-  });
-  const gainNode = new GainNode(audioContext);
+	const oscillatorNode = new OscillatorNode(audioContext, { frequency: 330 });
+	const gainNode = new GainNode(audioContext);
 
-  gainNode.gain.linearRampToValueAtTime(1, nextOscillationTime);
-  gainNode.gain.linearRampToValueAtTime(0, nextOscillationTime + 0.03);
+	gainNode.gain.linearRampToValueAtTime(1, nextOscillationTime);
+	gainNode.gain.linearRampToValueAtTime(0, nextOscillationTime + 0.03);
 
-  oscillatorNode.connect(gainNode);
-  gainNode.connect(audioContext.destination);
+	oscillatorNode.connect(gainNode);
+	gainNode.connect(audioContext.destination);
 
-  oscillatorNode.start(nextOscillationTime);
-  oscillatorNode.stop(nextOscillationTime + 0.03);
+	oscillatorNode.start(nextOscillationTime);
+	oscillatorNode.stop(nextOscillationTime + 0.03);
 }
 ```
 
-Here we instantiate an [`OscillatorNode`](https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode) and a [`GainNode`](https://developer.mozilla.org/en-US/docs/Web/API/GainNode) and schedule them to play the tick sound through our `AudioContext` instance using the time we've been tracking in `nextOscillationTime`. To bring it all together, let's see what happens on user interaction:
+Here we instantiate an
+[`OscillatorNode`](https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode)
+and a [`GainNode`](https://developer.mozilla.org/en-US/docs/Web/API/GainNode)
+and schedule them to play the tick sound through our `AudioContext` instance
+using the time we've been tracking in `nextOscillationTime`. To bring it all
+together, let's see what happens on user interaction:
 
 ```javascript
 playButton.onclick = async () => {
-  await audioContext.resume();
+	await audioContext.resume();
 
-  nextOscillationTime = audioContext.currentTime;
-  scheduleOscillation();
-  setInterval(scheduleTicks, 25);
+	nextOscillationTime = audioContext.currentTime;
+	scheduleOscillation();
+	setInterval(scheduleTicks, 25);
 };
 ```
 
-First, we resume our `AudioContext` instance to make sure that its clock is running and we can play audio through it, then we set `nextOscillationTime` to its current time so that the oscillations we schedule will track with `audioContext`'s time. After that, we schedule our first oscillation, the first tick, then we call `setInterval` to execute `scheduleTicks` every 25 milliseconds. We can opt to use the custom timer or worker timer that we discussed earlier instead of a bare `setInterval`, but it's alright as is since this approach doesn't require the timer to be very accurate because the timer is used as a lookahead to schedule ticks ahead of time not as a way to play them at an exact time, as we've previously tried.
+First, we resume our `AudioContext` instance to make sure that its clock is
+running and we can play audio through it, then we set `nextOscillationTime` to
+its current time so that the oscillations we schedule will track with
+`audioContext`'s time. After that, we schedule our first oscillation, the first
+tick, then we call `setInterval` to execute `scheduleTicks` every 25
+milliseconds. We can opt to use the custom timer or worker timer that we
+discussed earlier instead of a bare `setInterval`, but it's alright as is since
+this approach doesn't require the timer to be very accurate because the timer is
+used as a lookahead to schedule ticks ahead of time not as a way to play them at
+an exact time, as we've previously tried.
 
-Since `scheduleTicks` is called every 25 milliseconds, there will inevitably be redundant calls to it that do nothing because one call to it already schedules all ticks that need scheduling within the next 100 milliseconds. As wasteful as that sounds, that overlap is what assures that ticks will fire accurately because it's what covers for cases when the timer fires later than set. You can look at this [figure by Chris](https://web.dev/static/articles/audio-scheduling/image/scheduling-long-overlaps-3ceb8de6cfd55_856.png) to better visualize what I mean.
+Since `scheduleTicks` is called every 25 milliseconds, there will inevitably be
+redundant calls to it that do nothing because one call to it already schedules
+all ticks that need scheduling within the next 100 milliseconds. As wasteful as
+that sounds, that overlap is what assures that ticks will fire accurately
+because it's what covers for cases when the timer fires later than set. You can
+look at this
+[figure by Chris](https://web.dev/static/articles/audio-scheduling/image/scheduling-long-overlaps-3ceb8de6cfd55_856.png)
+to better visualize what I mean.
 
-Thus, unless the timer fires extremely late or the BPM set is impossibly high, there's really no chance of this approach firing a tick at the wrong time. Though these values, 25 and 100, would probably be good enough for most applications that don't do a lot of processing in the main thread, they're not set in stone. If you're planning to use this approach, you can play around with different values and find one that suits your use case the most since depending on how the metronome or music app using this approach is structured and used and how busy the main thread is with other things, having a lot of function calls like this could impact performance. So take it with a grain of salt and experiment on your own.
+Thus, unless the timer fires extremely late or the BPM set is impossibly high,
+there's really no chance of this approach firing a tick at the wrong time.
+Though these values, 25 and 100, would probably be good enough for most
+applications that don't do a lot of processing in the main thread, they're not
+set in stone. If you're planning to use this approach, you can play around with
+different values and find one that suits your use case the most since depending
+on how the metronome or music app using this approach is structured and used and
+how busy the main thread is with other things, having a lot of function calls
+like this could impact performance. So take it with a grain of salt and
+experiment on your own.
 
-All that said, there you have it, we're done, no more jittering this time because we used the precise clock that comes with `AudioContext`.
+All that said, there you have it, we're done, no more jittering this time
+because we used the precise clock that comes with `AudioContext`.
 
 <a href="https://tenor.com/view/dazed-and-confused-matthew-mc-conaughey-gif-3977028">
-  <Picture
-    alt="David Wooderson from Dazed and Confused; Alright, alright, alright meme"
-    {...alrightAlrightAlrightGif}
-  />
+	<Picture
+		alt="David Wooderson from Dazed and Confused; Alright, alright, alright meme"
+		{...alrightAlrightAlrightGif}
+	/>
 </a>
 
-In some sense, the solution was to actually ditch the JavaScript timers' clock for a better one and to only use them as a lookahead for any ticks that need to be scheduled. In that case, what if we wanted to do this without `setTimeout` or `setInterval` and in a way that doesn't require a lot of function calls? Is that possible?
+In some sense, the solution was to actually ditch the JavaScript timers' clock
+for a better one and to only use them as a lookahead for any ticks that need to
+be scheduled. In that case, what if we wanted to do this without `setTimeout` or
+`setInterval` and in a way that doesn't require a lot of function calls? Is that
+possible?
 
 ## Event Queue
 
-This approach was inspired by the lookahead timer we just finished discussing, as far as I can tell, it's my original idea 🤷‍♂️
+This approach was inspired by the lookahead timer we just finished discussing,
+as far as I can tell, it's my original idea 🤷‍♂️
 
-As the name suggests, we're going to use events. Specifically, we're going to use `OscillatorNode`'s [`ended`](https://developer.mozilla.org/en-US/docs/Web/API/AudioScheduledSourceNode/ended_event) event to queue oscillations. We start similarly to the previous approach:
+As the name suggests, we're going to use events. Specifically, we're going to
+use `OscillatorNode`'s
+[`ended`](https://developer.mozilla.org/en-US/docs/Web/API/AudioScheduledSourceNode/ended_event)
+event to queue oscillations. We start similarly to the previous approach:
 
 ```javascript
 const audioContext = new AudioContext();
@@ -247,85 +396,125 @@ let nextOscillationTime = 0;
 let queue = [];
 ```
 
-The difference is that we also declare `queue` to hold all the `OscillatorNode` instances we'll be queueing. Next, let's go to where most of the action is:
+The difference is that we also declare `queue` to hold all the `OscillatorNode`
+instances we'll be queueing. Next, let's go to where most of the action is:
 
 ```javascript
 function enqueue() {
-  const oscillatorNode = new OscillatorNode(audioContext, {
-    frequency: 330
-  });
-  const gainNode = new GainNode(audioContext);
+	const oscillatorNode = new OscillatorNode(audioContext, { frequency: 330 });
+	const gainNode = new GainNode(audioContext);
 
-  gainNode.gain.linearRampToValueAtTime(1, nextOscillationTime);
-  gainNode.gain.linearRampToValueAtTime(0, nextOscillationTime + 0.03);
+	gainNode.gain.linearRampToValueAtTime(1, nextOscillationTime);
+	gainNode.gain.linearRampToValueAtTime(0, nextOscillationTime + 0.03);
 
-  oscillatorNode.connect(gainNode);
-  gainNode.connect(audioContext.destination);
+	oscillatorNode.connect(gainNode);
+	gainNode.connect(audioContext.destination);
 
-  oscillatorNode.start(nextOscillationTime);
-  oscillatorNode.stop(nextOscillationTime + 0.03);
+	oscillatorNode.start(nextOscillationTime);
+	oscillatorNode.stop(nextOscillationTime + 0.03);
 
-  oscillatorNode.onended = () => {
-    enqueue();
-    queue.shift();
+	oscillatorNode.onended = () => {
+		enqueue();
+		queue.shift();
 
-    oscillatorNode.onended = null;
-  };
+		oscillatorNode.onended = null;
+	};
 
-  queue.push(oscillatorNode);
-  nextOscillationTime += 60 / BPM;
+	queue.push(oscillatorNode);
+	nextOscillationTime += 60 / BPM;
 }
 ```
 
-Compared to the lookahead timer solution, `enqueue` can be thought of as a combination of the `scheduleTicks` and `scheduleOscillation` functions. As we did there, we create `OscillatorNode` and `GainNode` instances to play audio through `audioContext` using `nextOscillationTime` as the basis for when. Here though, instead of scheduling ticks ahead of time, we put each oscillation, each tick, we create into `queue` to keep track of them. Once signaled by an `ended` event that a tick has finished playing, we dequeue it from `queue` and enqueue a replacement. We essentially create a self-sustaining queue that dequeues finished ticks and enqueues replacements on its own. Now let's see how it all goes together:
+Compared to the lookahead timer solution, `enqueue` can be thought of as a
+combination of the `scheduleTicks` and `scheduleOscillation` functions. As we
+did there, we create `OscillatorNode` and `GainNode` instances to play audio
+through `audioContext` using `nextOscillationTime` as the basis for when. Here
+though, instead of scheduling ticks ahead of time, we put each oscillation, each
+tick, we create into `queue` to keep track of them. Once signaled by an `ended`
+event that a tick has finished playing, we dequeue it from `queue` and enqueue a
+replacement. We essentially create a self-sustaining queue that dequeues
+finished ticks and enqueues replacements on its own. Now let's see how it all
+goes together:
 
 ```javascript
 playButton.onclick = async () => {
-  await audioContext.resume();
+	await audioContext.resume();
 
-  nextOscillationTime = audioContext.currentTime;
+	nextOscillationTime = audioContext.currentTime;
 
-  enqueue();
-  enqueue();
-  enqueue();
-  enqueue();
-  enqueue();
+	enqueue();
+	enqueue();
+	enqueue();
+	enqueue();
+	enqueue();
 };
 ```
 
-Again, we resume our `AudioContext` instance and set `nextOscillationTime` to its current time. After which, we prepopulate `queue` by calling `enqueue` a couple of times. We do this in anticipation of the `ended` event not firing exactly as a tick finishes playing. The reason this happens is the same as why timers tend to fire late because they're running in the main thread and the event loop can only get to events when it's finished with all the other tasks it needs to finish. Prepopulating `queue` acts as a cushion for those times that the `ended` event fires late. For example, the BPM is high so two ticks have already fired but the main thread was busy handling another event so the `ended` event for those two ticks fired late. If `queue` isn't prepopulated or isn't prepopulated enough, this would derail the metronome and we'd have jittering despite `AudioContext`'s accurate clock.
+Again, we resume our `AudioContext` instance and set `nextOscillationTime` to
+its current time. After which, we prepopulate `queue` by calling `enqueue` a
+couple of times. We do this in anticipation of the `ended` event not firing
+exactly as a tick finishes playing. The reason this happens is the same as why
+timers tend to fire late because they're running in the main thread and the
+event loop can only get to events when it's finished with all the other tasks it
+needs to finish. Prepopulating `queue` acts as a cushion for those times that
+the `ended` event fires late. For example, the BPM is high so two ticks have
+already fired but the main thread was busy handling another event so the `ended`
+event for those two ticks fired late. If `queue` isn't prepopulated or isn't
+prepopulated enough, this would derail the metronome and we'd have jittering
+despite `AudioContext`'s accurate clock.
 
-In the code snippet above, I prepopulate with five oscillations. That's just a number I've found to work well with the demo I created where the main thread doesn't have a lot to process, but your mileage may vary when using this approach, so you may want to prepopulate with more or less.
+In the code snippet above, I prepopulate with five oscillations. That's just a
+number I've found to work well with the demo I created where the main thread
+doesn't have a lot to process, but your mileage may vary when using this
+approach, so you may want to prepopulate with more or less.
 
-I think this solution is easier to reason with than the lookahead timer approach. It may also load the main thread less since it only calls functions when certain events fire rather than continuously in short intervals. However, more objects do need to be instantiated at one time with this approach, which may offset or overturn any possible performance advantages this has over the lookahead timer solution. So try them both out and use what suits your use case the most.
+I think this solution is easier to reason with than the lookahead timer
+approach. It may also load the main thread less since it only calls functions
+when certain events fire rather than continuously in short intervals. However,
+more objects do need to be instantiated at one time with this approach, which
+may offset or overturn any possible performance advantages this has over the
+lookahead timer solution. So try them both out and use what suits your use case
+the most.
 
-Nice, we got an alternative to the lookahead timer approach... this might be a nice point to end on, but...
+Nice, we got an alternative to the lookahead timer approach... this might be a
+nice point to end on, but...
 
 <a href="https://knowyourmeme.com/photos/2546187-pepe-silvia">
-  <Picture
-    alt="Charlie Kelly from It's Always Sunny In Philadelphia; Pepe Silvia meme"
-    {...pepeSilvaJpg}
-  />
+	<Picture
+		alt="Charlie Kelly from It's Always Sunny In Philadelphia; Pepe Silvia meme"
+		{...pepeSilvaJpg}
+	/>
 </a>
 
-If the Web Audio API is so good and precise as we've been discussing, is it possible to let it do all the work? Can we do some setup and just leave it on its own to play without it needing to interact with the main thread?
+If the Web Audio API is so good and precise as we've been discussing, is it
+possible to let it do all the work? Can we do some setup and just leave it on
+its own to play without it needing to interact with the main thread?
 
 ## Audio Loop
 
-This idea came from [Paul Adenot's article](https://blog.paul.cx/post/metronome). You can find his code [here](https://github.com/padenot/metro). Additionally, the method of rendering an [`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer) from an [`OfflineAudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext) was taken from this [Stack Overflow answer](https://stackoverflow.com/a/58257382).
+This idea came from
+[Paul Adenot's article](https://blog.paul.cx/post/metronome). You can find his
+code [here](https://github.com/padenot/metro). Additionally, the method of
+rendering an
+[`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)
+from an
+[`OfflineAudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext)
+was taken from this
+[Stack Overflow answer](https://stackoverflow.com/a/58257382).
 
-To achieve what we want, we're going to have to do a bit of setup. Let's start with this:
+To achieve what we want, we're going to have to do a bit of setup. Let's start
+with this:
 
 ```javascript
 const audioContext = new AudioContext();
 
 const offlineAudioContext = new OfflineAudioContext({
-  numberOfChannels: 1,
-  length: audioContext.sampleRate * 2,
-  sampleRate: audioContext.sampleRate
+	numberOfChannels: 1,
+	length: audioContext.sampleRate * 2,
+	sampleRate: audioContext.sampleRate,
 });
 const oscillatorNode = new OscillatorNode(offlineAudioContext, {
-  frequency: 330
+	frequency: 330,
 });
 const gainNode = new GainNode(offlineAudioContext);
 
@@ -339,43 +528,86 @@ oscillatorNode.start(0);
 oscillatorNode.stop(0.03);
 ```
 
-In this first part, like what we've done previously, we create `AudioContext`, `OscillatorNode`, and `GainNode` instances. However, unlike before we won't play oscillations directly through `audioContext`, instead, we'll create an instance of `OfflineAudioContext` with properties based on `audioContext` and play them through that. This next bit will show you why:
+In this first part, like what we've done previously, we create `AudioContext`,
+`OscillatorNode`, and `GainNode` instances. However, unlike before we won't play
+oscillations directly through `audioContext`, instead, we'll create an instance
+of `OfflineAudioContext` with properties based on `audioContext` and play them
+through that. This next bit will show you why:
 
 ```javascript
 const sourceNode = new AudioBufferSourceNode(audioContext, {
-  loop: true,
-  loopEnd: 60 / BPM
+	loop: true,
+	loopEnd: 60 / BPM,
 });
 sourceNode.buffer = await offlineAudioContext.startRendering();
 sourceNode.connect(audioContext.destination);
 sourceNode.start();
 ```
 
-Here, we create a looping [`AudioBufferSourceNode`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode) where each loop is one tick. Then, we render `offlineAudioContext` into an `AudioBuffer` and set that as `sourceNode`'s buffer. All that's left after that is to play `sourceNode` through our `AudioContext` instance. Essentially, we created an `AudioBuffer` that will be played in a loop through `audioContext`. Here we chose to do that using an `OfflineAudioContext` instance, but there are other ways to do it. If you know what you're doing like [Paul did](https://github.com/padenot/metro/blob/06d80e23c3892ff0e110d362267822d3e4abde2c/metro.js.md#the-metronome-core), you can manually instantiate an `AudioBuffer` and set its channel's phase and amplitude directly.
+Here, we create a looping
+[`AudioBufferSourceNode`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode)
+where each loop is one tick. Then, we render `offlineAudioContext` into an
+`AudioBuffer` and set that as `sourceNode`'s buffer. All that's left after that
+is to play `sourceNode` through our `AudioContext` instance. Essentially, we
+created an `AudioBuffer` that will be played in a loop through `audioContext`.
+Here we chose to do that using an `OfflineAudioContext` instance, but there are
+other ways to do it. If you know what you're doing like
+[Paul did](https://github.com/padenot/metro/blob/06d80e23c3892ff0e110d362267822d3e4abde2c/metro.js.md#the-metronome-core),
+you can manually instantiate an `AudioBuffer` and set its channel's phase and
+amplitude directly.
 
-Anyway, after all that setup, as we've done before, we resume `audioContext` on user interaction to let the audio play:
+Anyway, after all that setup, as we've done before, we resume `audioContext` on
+user interaction to let the audio play:
 
 ```javascript
 playButton.onclick = async () => {
-  await audioContext.resume();
+	await audioContext.resume();
 };
 ```
 
-That's it, we're done. This approach is the most robust of all that we've tried and has the least possibility of jittering since we don't have to deal with any latencies from the main thread. The only time that something could go wrong is if there's a problem with the setup or if the Web Audio API itself has a bug.
+That's it, we're done. This approach is the most robust of all that we've tried
+and has the least possibility of jittering since we don't have to deal with any
+latencies from the main thread. The only time that something could go wrong is
+if there's a problem with the setup or if the Web Audio API itself has a bug.
 
 <a href="https://tenor.com/view/ok-all-nice-gif-22927671">
-  <Picture
-    alt="Brent Rambo from Apple's 1990s promotional video; Kid giving thumbs up meme"
-    {...kidGivingThumbsUpGif}
-  />
+	<Picture
+		alt="Brent Rambo from Apple's 1990s promotional video; Kid giving thumbs up meme"
+		{...kidGivingThumbsUpGif}
+	/>
 </a>
 
 ## Conclusion
 
-Whew! That was a ride. At least it was for me creating the demo and writing this article to go with it. I ended up reading and learning a lot about music and audio engineering in that process. From things I mentioned such as the Web Audio API to things that I didn't get to touch on since they're tangential to the topic like how notes, scales, and octaves work.
+Whew! That was a ride. At least it was for me creating the demo and writing this
+article to go with it. I ended up reading and learning a lot about music and
+audio engineering in that process. From things I mentioned such as the Web Audio
+API to things that I didn't get to touch on since they're tangential to the
+topic like how notes, scales, and octaves work.
 
-The solutions we tried went from trying to correct JavaScript timers to completely giving up on them and leaning in on the Web Audio API. I guess the takeaway when it comes to creating metronomes and music apps in the browser is to use the Web Audio API as much we can, as that assures the best performance and accuracy. So going with an implementation that's close to how the audio loop approach works would probably be the best way. If that's too limiting, you want more flexibility, or it just can't work for your use case, then going with something like the lookahead timer or event queue solutions would probably work just as well. Using approaches similar to the custom timer or worker timer would only be good if the Web Audio API is a no-go for your use case, but I don't know why that would be unless you need to support old browsers.
+The solutions we tried went from trying to correct JavaScript timers to
+completely giving up on them and leaning in on the Web Audio API. I guess the
+takeaway when it comes to creating metronomes and music apps in the browser is
+to use the Web Audio API as much we can, as that assures the best performance
+and accuracy. So going with an implementation that's close to how the audio loop
+approach works would probably be the best way. If that's too limiting, you want
+more flexibility, or it just can't work for your use case, then going with
+something like the lookahead timer or event queue solutions would probably work
+just as well. Using approaches similar to the custom timer or worker timer would
+only be good if the Web Audio API is a no-go for your use case, but I don't know
+why that would be unless you need to support old browsers.
 
-Generalizing the takeaway, when possible, we should avoid blocking the main thread by putting time-sensitive and heavy tasks on their own thread so that the main thread can focus on the UI changes and events that it's meant to handle. Additionally, as much as possible, we should try to take advantage of available browser APIs since they're created by people who have thought deeply about the problems they try to solve and how their implementation and interfaces should work. The only time you should go against this and roll your own is if you want to learn how these things work under the hood or if you've done extensive research and you know that your use case requires you to do things on your own.
+Generalizing the takeaway, when possible, we should avoid blocking the main
+thread by putting time-sensitive and heavy tasks on their own thread so that the
+main thread can focus on the UI changes and events that it's meant to handle.
+Additionally, as much as possible, we should try to take advantage of available
+browser APIs since they're created by people who have thought deeply about the
+problems they try to solve and how their implementation and interfaces should
+work. The only time you should go against this and roll your own is if you want
+to learn how these things work under the hood or if you've done extensive
+research and you know that your use case requires you to do things on your own.
 
-I think that's all I wanted to say on that. Feel free to correct me if I made any mistakes, I probably said some inaccurate things here and there. I don't have comments on here yet, so you can just [file an issue](https://github.com/mcecode/mce.codes/issues) for now.
+I think that's all I wanted to say on that. Feel free to correct me if I made
+any mistakes, I probably said some inaccurate things here and there. I don't
+have comments on here yet, so you can just
+[file an issue](https://github.com/mcecode/mce.codes/issues) for now.

@@ -4,30 +4,30 @@ const { title, description } = Astro.props;
 ---
 
 <section>
-  <h2>{title}</h2>
-  <p>{description}</p>
+	<h2>{title}</h2>
+	<p>{description}</p>
 </section>
 
 <style lang="scss">
-  section {
-    margin-bottom: v-const("section_spacing.medium");
-  }
+	section {
+		margin-bottom: v-const("section_spacing.medium");
+	}
 
-  @include m-large {
-    section {
-      display: flex;
-      gap: v-size(5);
-      margin-bottom: v-const("section_spacing.large");
-    }
-    h2 {
-      flex: 1 0 40%;
-      text-align: right;
-    }
-  }
+	@include m-large {
+		section {
+			display: flex;
+			gap: v-size(5);
+			margin-bottom: v-const("section_spacing.large");
+		}
+		h2 {
+			flex: 1 0 40%;
+			text-align: right;
+		}
+	}
 
-  @include m-xlarge {
-    h2 {
-      flex-basis: 30%;
-    }
-  }
+	@include m-xlarge {
+		h2 {
+			flex-basis: 30%;
+		}
+	}
 </style>

@@ -5,186 +5,186 @@ $initialLogoMenuWidth: v-size(14);
 // No JS layout
 
 @include no-js {
-  .header {
-    display: grid;
-    gap: v-size(2);
-    justify-items: center;
-    width: 100%;
-    margin: v-size(2) auto v-const("section_spacing.small");
-  }
-  .nav-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-  }
-  // The use of lobotomized owls instead of 'gap' on 'nav-list' is intentional
-  // as these styles mostly take effect on older browsers where 'gap' is not
-  // supported on Flexbox containers. On smaller screens, the alignment is not
-  // as good as using 'gap', but it will do.
-  .nav-list > * + * {
-    margin-left: v-size(4);
-  }
+	.header {
+		display: grid;
+		gap: v-size(2);
+		justify-items: center;
+		width: 100%;
+		margin: v-size(2) auto v-const("section_spacing.small");
+	}
+	.nav-list {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		width: 100%;
+	}
+	// The use of lobotomized owls instead of 'gap' on 'nav-list' is intentional
+	// as these styles mostly take effect on older browsers where 'gap' is not
+	// supported on Flexbox containers. On smaller screens, the alignment is not
+	// as good as using 'gap', but it will do.
+	.nav-list > * + * {
+		margin-left: v-size(4);
+	}
 
-  // NOTE: The included media query may need to be updated when the number of
-  // nav items is updated.
-  @include m-large {
-    .header {
-      grid-template-columns: 1fr 2fr;
-      justify-items: end;
-    }
-    .logo {
-      justify-self: start;
-    }
-    .nav-list > * + * {
-      margin-left: v-size(6);
-    }
-  }
+	// NOTE: The included media query may need to be updated when the number of
+	// nav items is updated.
+	@include m-large {
+		.header {
+			grid-template-columns: 1fr 2fr;
+			justify-items: end;
+		}
+		.logo {
+			justify-self: start;
+		}
+		.nav-list > * + * {
+			margin-left: v-size(6);
+		}
+	}
 }
 
 // With JS layout
 
 @include with-js {
-  .header {
-    position: relative;
-    display: grid;
-    gap: v-size(5);
-    justify-items: center;
-    height: $initialLogoMenuWidth;
-    margin-bottom: v-const("section_spacing.small");
-    overflow: hidden;
-  }
-  .logo {
-    justify-self: start;
-    height: fit-content;
-  }
-  .menu {
-    position: absolute;
-    inset: 0 0 auto auto;
-  }
-  .nav-list,
-  .mode {
-    display: none;
-  }
-  .nav-list {
-    gap: v-size(5);
-    font-size: v-size(6);
-    text-align: center;
-  }
-  .mode {
-    height: fit-content;
-    width: fit-content;
-    margin-top: v-size(10);
-  }
+	.header {
+		position: relative;
+		display: grid;
+		gap: v-size(5);
+		justify-items: center;
+		height: $initialLogoMenuWidth;
+		margin-bottom: v-const("section_spacing.small");
+		overflow: hidden;
+	}
+	.logo {
+		justify-self: start;
+		height: fit-content;
+	}
+	.menu {
+		position: absolute;
+		inset: 0 0 auto auto;
+	}
+	.nav-list,
+	.mode {
+		display: none;
+	}
+	.nav-list {
+		gap: v-size(5);
+		font-size: v-size(6);
+		text-align: center;
+	}
+	.mode {
+		height: fit-content;
+		width: fit-content;
+		margin-top: v-size(10);
+	}
 
-  body.open-nav {
-    position: fixed;
-    width: 100%;
-  }
-  .header.open-nav {
-    height: 100dvh;
-    padding-bottom: v-size(12);
-  }
-  .nav-list.open-nav {
-    display: grid;
-  }
-  .mode.open-nav {
-    display: block;
-  }
+	body.open-nav {
+		position: fixed;
+		width: 100%;
+	}
+	.header.open-nav {
+		height: 100dvh;
+		padding-bottom: v-size(12);
+	}
+	.nav-list.open-nav {
+		display: grid;
+	}
+	.mode.open-nav {
+		display: block;
+	}
 
-  @include m-motion {
-    .header {
-      transition: height 250ms ease-in-out;
-    }
-  }
+	@include m-motion {
+		.header {
+			transition: height 250ms ease-in-out;
+		}
+	}
 
-  // NOTE: The included media query may need to be updated when the number of
-  // nav items is updated.
-  @include m-medium {
-    .header {
-      grid-template-columns: 1fr 2fr 1fr;
-      height: unset;
-    }
-    .menu {
-      display: none;
-    }
-    .nav-list {
-      display: flex;
-      align-items: center;
-      height: 100%;
-    }
-    .mode {
-      display: block;
-      justify-self: end;
-      align-self: center;
-      margin-top: unset;
-    }
+	// NOTE: The included media query may need to be updated when the number of
+	// nav items is updated.
+	@include m-medium {
+		.header {
+			grid-template-columns: 1fr 2fr 1fr;
+			height: unset;
+		}
+		.menu {
+			display: none;
+		}
+		.nav-list {
+			display: flex;
+			align-items: center;
+			height: 100%;
+		}
+		.mode {
+			display: block;
+			justify-self: end;
+			align-self: center;
+			margin-top: unset;
+		}
 
-    body.open-nav {
-      position: unset;
-    }
-    .header.open-nav {
-      height: unset;
-      padding-bottom: unset;
-    }
-    .nav-list.open-nav {
-      display: flex;
-    }
-  }
+		body.open-nav {
+			position: unset;
+		}
+		.header.open-nav {
+			height: unset;
+			padding-bottom: unset;
+		}
+		.nav-list.open-nav {
+			display: flex;
+		}
+	}
 }
 
 // SVG sizes
 
 .logo-svg,
 .menu-svg {
-  width: $initialLogoMenuWidth;
+	width: $initialLogoMenuWidth;
 }
 .logo-svg {
-  --svg-stroke-width: 6;
+	--svg-stroke-width: 6;
 }
 .menu-svg {
-  --svg-stroke-width: 1;
+	--svg-stroke-width: 1;
 }
 .mode-svg {
-  width: v-size(8);
+	width: v-size(8);
 }
 
 @include m-medium {
-  .logo-svg,
-  .menu-svg {
-    width: v-size(16);
-  }
-  .mode-svg {
-    width: v-size(10);
-  }
+	.logo-svg,
+	.menu-svg {
+		width: v-size(16);
+	}
+	.mode-svg {
+		width: v-size(10);
+	}
 }
 
 @include m-large {
-  .logo-svg,
-  .menu-svg {
-    width: v-size(18);
-  }
-  .mode-svg {
-    width: v-size(11);
-  }
+	.logo-svg,
+	.menu-svg {
+		width: v-size(18);
+	}
+	.mode-svg {
+		width: v-size(11);
+	}
 }
 
 // Mode groups opacity
 
 .mode-moon {
-  opacity: 1;
+	opacity: 1;
 }
 .mode-sun {
-  opacity: 0;
+	opacity: 0;
 }
 
 @include m-dark {
-  .mode-moon {
-    opacity: 0;
-  }
-  .mode-sun {
-    opacity: 1;
-  }
+	.mode-moon {
+		opacity: 0;
+	}
+	.mode-sun {
+		opacity: 1;
+	}
 }

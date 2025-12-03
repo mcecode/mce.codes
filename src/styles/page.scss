@@ -1,18 +1,18 @@
 // Colors
 
 :root {
-  --c-foreground: #{v-color("black")};
-  --c-background: #{v-color("white")};
-  --c-accent-1: #{v-color("grayDark")};
-  --c-accent-2: #{v-color("grayLight")};
+	--c-foreground: #{v-color("black")};
+	--c-background: #{v-color("white")};
+	--c-accent-1: #{v-color("grayDark")};
+	--c-accent-2: #{v-color("grayLight")};
 }
 @include m-dark {
-  :root {
-    --c-foreground: #{v-color("white")};
-    --c-background: #{v-color("black")};
-    --c-accent-1: #{v-color("grayLight")};
-    --c-accent-2: #{v-color("grayDark")};
-  }
+	:root {
+		--c-foreground: #{v-color("white")};
+		--c-background: #{v-color("black")};
+		--c-accent-1: #{v-color("grayLight")};
+		--c-accent-2: #{v-color("grayDark")};
+	}
 }
 
 // Base
@@ -20,195 +20,195 @@
 *,
 ::before,
 ::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 html {
-  height: 100%;
-  background-color: var(--c-background);
-  color: var(--c-foreground);
+	height: 100%;
+	background-color: var(--c-background);
+	color: var(--c-foreground);
 }
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  max-width: 75rem;
-  margin: auto;
-  padding: v-size(4) v-size(4) v-size(6);
-  font-family: v-font("body");
-  font-size: v-size(5);
-  line-height: 1.6;
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+	max-width: 75rem;
+	margin: auto;
+	padding: v-size(4) v-size(4) v-size(6);
+	font-family: v-font("body");
+	font-size: v-size(5);
+	line-height: 1.6;
 }
 h1,
 h2,
 h3 {
-  margin-bottom: v-size(2, "em");
-  font-family: v-font("title");
-  font-weight: 600;
-  line-height: 1.2;
+	margin-bottom: v-size(2, "em");
+	font-family: v-font("title");
+	font-weight: 600;
+	line-height: 1.2;
 }
 h1 {
-  font-size: v-size(10);
+	font-size: v-size(10);
 }
 h2 {
-  font-size: v-size(7);
+	font-size: v-size(7);
 }
 h3 {
-  font-size: v-size(6);
+	font-size: v-size(6);
 }
 main {
-  flex-grow: 1;
+	flex-grow: 1;
 }
 li {
-  list-style: none;
+	list-style: none;
 }
 a {
-  color: inherit;
+	color: inherit;
 
-  &:hover {
-    text-decoration-style: dotted;
-  }
+	&:hover {
+		text-decoration-style: dotted;
+	}
 }
 strong {
-  font-weight: 700;
+	font-weight: 700;
 }
 button {
-  cursor: pointer;
+	cursor: pointer;
 }
 img,
 svg {
-  max-width: 100%;
-  height: auto;
+	max-width: 100%;
+	height: auto;
 }
 img {
-  pointer-events: none;
-  user-select: none;
+	pointer-events: none;
+	user-select: none;
 }
 line,
 path {
-  stroke: var(--c-foreground);
-  stroke-width: var(--svg-stroke-width, 5);
+	stroke: var(--c-foreground);
+	stroke-width: var(--svg-stroke-width, 5);
 }
 path {
-  stroke-linecap: round;
-  stroke-linejoin: round;
+	stroke-linecap: round;
+	stroke-linejoin: round;
 }
 template {
-  display: none;
+	display: none;
 }
 code {
-  font-family: v-font("code");
-  font-size: 85%;
+	font-family: v-font("code");
+	font-size: 85%;
 }
 
 @include m-small {
-  body {
-    padding: v-size(6);
-  }
+	body {
+		padding: v-size(6);
+	}
 }
 
 @include m-medium {
-  body {
-    padding: v-size(8);
-    font-size: v-size(6);
-  }
-  h1 {
-    font-size: v-size(12);
-  }
-  h2 {
-    font-size: v-size(9);
-  }
-  h3 {
-    font-size: v-size(7);
-  }
+	body {
+		padding: v-size(8);
+		font-size: v-size(6);
+	}
+	h1 {
+		font-size: v-size(12);
+	}
+	h2 {
+		font-size: v-size(9);
+	}
+	h3 {
+		font-size: v-size(7);
+	}
 }
 
 @include m-large {
-  body {
-    padding: v-size(10);
-  }
+	body {
+		padding: v-size(10);
+	}
 }
 
 // Utilities
 
 .no-decor {
-  text-decoration: none;
+	text-decoration: none;
 }
 .no-button {
-  border: none;
-  background: inherit;
+	border: none;
+	background: inherit;
 }
 .small-text {
-  font-size: v-size(3);
-  color: var(--c-accent-1);
+	font-size: v-size(3);
+	color: var(--c-accent-1);
 }
 .word-break-all {
-  word-break: break-all;
+	word-break: break-all;
 }
 h1.larger-spacing {
-  margin-bottom: v-size(5, "em");
+	margin-bottom: v-size(5, "em");
 }
 h1.smaller-spacing {
-  margin-bottom: v-size(1, "em");
+	margin-bottom: v-size(1, "em");
 }
 p.larger-spacing {
-  margin-bottom: v-size(8, "em");
+	margin-bottom: v-size(8, "em");
 }
 
 @include m-medium {
-  .small-text {
-    font-size: v-size(4);
-  }
+	.small-text {
+		font-size: v-size(4);
+	}
 }
 
 // Animations
 
 .rotate-left {
-  transform: rotateZ(-90deg);
+	transform: rotateZ(-90deg);
 }
 .appear {
-  animation: 0ms ease-in-out forwards appear;
+	animation: 0ms ease-in-out forwards appear;
 }
 .vanish {
-  animation: 0ms ease-in-out reverse forwards appear;
+	animation: 0ms ease-in-out reverse forwards appear;
 }
 .rotate-appear {
-  animation: 0ms ease-in-out forwards rotate-appear;
+	animation: 0ms ease-in-out forwards rotate-appear;
 }
 .rotate-vanish {
-  animation: 0ms ease-in-out reverse forwards rotate-appear;
+	animation: 0ms ease-in-out reverse forwards rotate-appear;
 }
 
 @include m-motion {
-  .transition-transform {
-    transition: transform 250ms ease-in-out;
-  }
-  .appear,
-  .vanish,
-  .rotate-appear,
-  .rotate-vanish {
-    animation-duration: 250ms;
-  }
+	.transition-transform {
+		transition: transform 250ms ease-in-out;
+	}
+	.appear,
+	.vanish,
+	.rotate-appear,
+	.rotate-vanish {
+		animation-duration: 250ms;
+	}
 }
 
 @keyframes appear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 @keyframes rotate-appear {
-  from {
-    opacity: 0;
-    transform: scale(0) rotateZ(-90deg);
-    transform-origin: center;
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) rotateZ(0deg);
-    transform-origin: center;
-  }
+	from {
+		opacity: 0;
+		transform: scale(0) rotateZ(-90deg);
+		transform-origin: center;
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) rotateZ(0deg);
+		transform-origin: center;
+	}
 }

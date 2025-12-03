@@ -4,7 +4,10 @@ dateCreated: 2024-11-12
 dateUpdated: 2025-08-25
 ---
 
-This cheatsheet assumes that you're already familiar with Git concepts and know the usual `init`, `pull`, `add`, `commit`, `push` flow. It aims to document commands and flags that I tend to use but forget when I haven't used them in a while.
+This cheatsheet assumes that you're already familiar with Git concepts and know
+the usual `init`, `pull`, `add`, `commit`, `push` flow. It aims to document
+commands and flags that I tend to use but forget when I haven't used them in a
+while.
 
 ## Branching
 
@@ -144,7 +147,10 @@ Or shorthand:
 git add -p <file>
 ```
 
-**Note:** `y` means stage this hunk. `n` means don't stage this hunk. `s` means split this hunk (not always possible). `e` means manually edit this hunk to add the specific lines you want to add (done when hunk is too big and `s` is not possible).
+**Note:** `y` means stage this hunk. `n` means don't stage this hunk. `s` means
+split this hunk (not always possible). `e` means manually edit this hunk to add
+the specific lines you want to add (done when hunk is too big and `s` is not
+possible).
 
 ## Committing
 
@@ -166,7 +172,9 @@ Or to discard ALL uncommitted changes:
 git reset --hard HEAD~
 ```
 
-**Note:** You can lose a lot of work when using `--hard`, so only use it if you're sure you want to nuke your working tree (yes, you can use `reflog`, but still).
+**Note:** You can lose a lot of work when using `--hard`, so only use it if
+you're sure you want to nuke your working tree (yes, you can use `reflog`, but
+still).
 
 ### Change latest commit message
 
@@ -174,7 +182,8 @@ git reset --hard HEAD~
 git commit --amend
 ```
 
-**Note:** There should be no staged changes or else those will be added to the latest commit.
+**Note:** There should be no staged changes or else those will be added to the
+latest commit.
 
 ### Change previous commit messages
 
@@ -188,7 +197,8 @@ Or shorthand:
 git rebase -i <hash>~
 ```
 
-Then, change `pick` to `reword` or `r` on the commits whose message you want to change.
+Then, change `pick` to `reword` or `r` on the commits whose message you want to
+change.
 
 ### Add changes to latest commit
 
@@ -216,7 +226,8 @@ Or shorthand:
 git rebase -i <hash>~
 ```
 
-Then, change `pick` to `edit` or `e` on the commits you want to change. Once you're done with your changes, stage and commit them:
+Then, change `pick` to `edit` or `e` on the commits you want to change. Once
+you're done with your changes, stage and commit them:
 
 ```console
 git commit --amend
@@ -244,7 +255,8 @@ git rebase --abort
 
 ### Fix rebase conflicts
 
-When conflicts occur from a `git rebase` or a `git pull --rebase`. Fix the files with conflicts, stage them, then run:
+When conflicts occur from a `git rebase` or a `git pull --rebase`. Fix the files
+with conflicts, stage them, then run:
 
 ```console
 git rebase --continue

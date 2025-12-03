@@ -8,20 +8,20 @@ const notes = await getCollection("notes");
 ---
 
 <Page title="Notes">
-  <h1 class="smaller-spacing">Notes</h1>
-  <p class="larger-spacing">
-    Short notes, reminders, or checklists for myself that might also be useful
-    to you
-  </p>
-  <ul>
-    {
-      notes
-        .sort(
-          (a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime()
-        )
-        .map(({ id, data: { title, dateCreated, dateUpdated } }) => (
-          <PostItem {title} {dateCreated} {dateUpdated} link={`/notes/${id}`} />
-        ))
-    }
-  </ul>
+	<h1 class="smaller-spacing">Notes</h1>
+	<p class="larger-spacing">
+		Short notes, reminders, or checklists for myself that might also be useful
+		to you
+	</p>
+	<ul>
+		{
+			notes
+				.sort(
+					(a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime(),
+				)
+				.map(({ id, data: { title, dateCreated, dateUpdated } }) => (
+					<PostItem {title} {dateCreated} {dateUpdated} link={`/notes/${id}`} />
+				))
+		}
+	</ul>
 </Page>

@@ -1,100 +1,100 @@
 export default class FocusTrap {
-  static #isLocked = false;
-  static #currentKey = "";
+	static #isLocked = false;
+	static #currentKey = "";
 
-  #container: HTMLElement;
-  #key: string;
-  #listener: (e: KeyboardEvent) => void;
+	#container: HTMLElement;
+	#key: string;
+	#listener: (e: KeyboardEvent) => void;
 
-  constructor(container: HTMLElement, start: HTMLElement, end: HTMLElement) {
-    this.#container = container;
-    this.#key = crypto.getRandomValues(new Uint8Array(10)).join("");
-    this.#listener = (e) => {
-      if (e.key.toLowerCase() !== "tab") {
-        return;
-      }
+	constructor(container: HTMLElement, start: HTMLElement, end: HTMLElement) {
+		this.#container = container;
+		this.#key = crypto.getRandomValues(new Uint8Array(10)).join("");
+		this.#listener = (e) => {
+			if (e.key.toLowerCase() !== "tab") {
+				return;
+			}
 
-      if (e.shiftKey && document.activeElement === start) {
-        e.preventDefault();
-        end.focus();
-        return;
-      }
+			if (e.shiftKey && document.activeElement === start) {
+				e.preventDefault();
+				end.focus();
+				return;
+			}
 
-      if (!e.shiftKey && document.activeElement === end) {
-        e.preventDefault();
-        start.focus();
-      }
-    };
-  }
+			if (!e.shiftKey && document.activeElement === end) {
+				e.preventDefault();
+				start.focus();
+			}
+		};
+	}
 
-  get isLocked() {
-    return FocusTrap.#isLocked;
-  }
+	get isLocked() {
+		return FocusTrap.#isLocked;
+	}
 
-  lock() {
-    if (FocusTrap.#isLocked) {
-      throw new Error("Focus trap is already locked.");
-    }
+	lock() {
+		if (FocusTrap.#isLocked) {
+			throw new Error("Focus trap is already locked.");
+		}
 
-    addEventListener("keydown", this.#listener);
-    FocusTrap.#isLocked = true;
-    FocusTrap.#currentKey = this.#key;
+		addEventListener("keydown", this.#listener);
+		FocusTrap.#isLocked = true;
+		FocusTrap.#currentKey = this.#key;
 
-    this.#hideElements(document.body, this.#container);
-  }
+		this.#hideElements(document.body, this.#container);
+	}
 
-  #hideElements(root: Element, exception: Element) {
-    for (const child of root.children) {
-      if (child === exception) {
-        continue;
-      }
+	#hideElements(root: Element, exception: Element) {
+		for (const child of root.children) {
+			if (child === exception) {
+				continue;
+			}
 
-      if (child.contains(exception)) {
-        this.#hideElements(child, exception);
-        continue;
-      }
+			if (child.contains(exception)) {
+				this.#hideElements(child, exception);
+				continue;
+			}
 
-      child.setAttribute("aria-hidden", "true");
-    }
-  }
+			child.setAttribute("aria-hidden", "true");
+		}
+	}
 
-  unlock() {
-    if (!FocusTrap.#isLocked) {
-      return;
-    }
+	unlock() {
+		if (!FocusTrap.#isLocked) {
+			return;
+		}
 
-    if (FocusTrap.#currentKey !== this.#key) {
-      throw new Error("Cannot unlock a lock set by another focus trap.");
-    }
+		if (FocusTrap.#currentKey !== this.#key) {
+			throw new Error("Cannot unlock a lock set by another focus trap.");
+		}
 
-    removeEventListener("keydown", this.#listener);
-    FocusTrap.#isLocked = false;
-    FocusTrap.#currentKey = "";
+		removeEventListener("keydown", this.#listener);
+		FocusTrap.#isLocked = false;
+		FocusTrap.#currentKey = "";
 
-    this.#unhideElements(document.body, this.#container);
-  }
+		this.#unhideElements(document.body, this.#container);
+	}
 
-  #unhideElements(root: Element, exception: Element) {
-    for (const child of root.children) {
-      if (child === exception) {
-        continue;
-      }
+	#unhideElements(root: Element, exception: Element) {
+		for (const child of root.children) {
+			if (child === exception) {
+				continue;
+			}
 
-      if (child.contains(exception)) {
-        this.#hideElements(child, exception);
-        continue;
-      }
+			if (child.contains(exception)) {
+				this.#hideElements(child, exception);
+				continue;
+			}
 
-      child.removeAttribute("aria-hidden");
-    }
-  }
+			child.removeAttribute("aria-hidden");
+		}
+	}
 
-  toggleLock() {
-    if (FocusTrap.#isLocked) {
-      this.unlock();
-      return;
-    }
+	toggleLock() {
+		if (FocusTrap.#isLocked) {
+			this.unlock();
+			return;
+		}
 
-    this.lock();
-  }
+		this.lock();
+	}
 }

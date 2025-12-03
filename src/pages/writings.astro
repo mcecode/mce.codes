@@ -8,24 +8,24 @@ const writings = await getCollection("writings");
 ---
 
 <Page title="Writings">
-  <h1 class="smaller-spacing">Writings</h1>
-  <p class="larger-spacing">
-    Longer form writings, essays, or ramblings that you might be interested in
-  </p>
-  <ul>
-    {
-      writings
-        .sort(
-          (a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime()
-        )
-        .map(({ id, data: { title, dateCreated, dateUpdated } }) => (
-          <PostItem
-            {title}
-            {dateCreated}
-            {dateUpdated}
-            link={`/writings/${id}`}
-          />
-        ))
-    }
-  </ul>
+	<h1 class="smaller-spacing">Writings</h1>
+	<p class="larger-spacing">
+		Longer form writings, essays, or ramblings that you might be interested in
+	</p>
+	<ul>
+		{
+			writings
+				.sort(
+					(a, b) => b.data.dateCreated.getTime() - a.data.dateCreated.getTime(),
+				)
+				.map(({ id, data: { title, dateCreated, dateUpdated } }) => (
+					<PostItem
+						{title}
+						{dateCreated}
+						{dateUpdated}
+						link={`/writings/${id}`}
+					/>
+				))
+		}
+	</ul>
 </Page>

@@ -1,133 +1,133 @@
 article {
-  padding-bottom: v-const("section_spacing.small");
+	padding-bottom: v-const("section_spacing.small");
 
-  h2,
-  h3 {
-    margin-bottom: v-size(4, "em");
-  }
+	h2,
+	h3 {
+		margin-bottom: v-size(4, "em");
+	}
 
-  p,
-  ul,
-  pre,
-  a:has(picture) {
-    margin-bottom: v-size(6, "em");
-  }
+	p,
+	ul,
+	pre,
+	a:has(picture) {
+		margin-bottom: v-size(6, "em");
+	}
 
-  ul > li {
-    list-style-type: circle;
-  }
-  ol > li {
-    list-style-type: decimal;
-  }
-  li {
-    margin-left: v-size(4, "em");
-  }
+	ul > li {
+		list-style-type: circle;
+	}
+	ol > li {
+		list-style-type: decimal;
+	}
+	li {
+		margin-left: v-size(4, "em");
+	}
 
-  a:has(picture),
-  picture {
-    display: inline-block;
-  }
-  img {
-    vertical-align: middle;
-  }
+	a:has(picture),
+	picture {
+		display: inline-block;
+	}
+	img {
+		vertical-align: middle;
+	}
 
-  blockquote {
-    padding-left: v-size(4, "em");
-    border-left: 2px solid var(--c-accent-1);
-    color: var(--c-accent-1);
-  }
+	blockquote {
+		padding-left: v-size(4, "em");
+		border-left: 2px solid var(--c-accent-1);
+		color: var(--c-accent-1);
+	}
 }
 
 // Inspired from MDN's heading link styles
 h2 a,
 h3 a {
-  text-decoration: none;
+	text-decoration: none;
 
-  &::before {
-    $hashSize: v-size(3, "em");
+	&::before {
+		$hashSize: v-size(3, "em");
 
-    content: "#";
-    display: inline-block;
-    width: $hashSize;
-    margin-left: -#{$hashSize};
-    color: var(--c-accent-1);
-    font-size: $hashSize;
-    visibility: hidden;
-  }
+		content: "#";
+		display: inline-block;
+		width: $hashSize;
+		margin-left: -#{$hashSize};
+		color: var(--c-accent-1);
+		font-size: $hashSize;
+		visibility: hidden;
+	}
 
-  &:hover {
-    text-decoration: underline solid;
+	&:hover {
+		text-decoration: underline solid;
 
-    &::before {
-      visibility: visible;
-    }
-  }
+		&::before {
+			visibility: visible;
+		}
+	}
 }
 
 // Inspired from GitHub's inline code styles
 .inline-code {
-  padding: v-size(1, "em") v-size(2, "em");
-  border-radius: 6px;
-  background-color: var(--c-accent-2);
+	padding: v-size(1, "em") v-size(2, "em");
+	border-radius: 6px;
+	background-color: var(--c-accent-2);
 }
 
 $codeSpacing: v-size(6, "em");
 .block-code-wrapper {
-  border-radius: 10px;
-  background-color: var(--c-code-light-bg);
-  color: var(--c-code-light);
+	border-radius: 10px;
+	background-color: var(--c-code-light-bg);
+	color: var(--c-code-light);
 
-  @include m-dark {
-    background-color: var(--c-code-dark-bg);
-    color: var(--c-code-dark);
-  }
+	@include m-dark {
+		background-color: var(--c-code-dark-bg);
+		color: var(--c-code-dark);
+	}
 }
 .block-code {
-  display: inline-block;
-  min-width: calc(100% - $codeSpacing * 2);
-  margin: $codeSpacing;
+	display: inline-block;
+	min-width: calc(100% - $codeSpacing * 2);
+	margin: $codeSpacing;
 }
 .block-code-line.diff {
-  position: relative;
-  display: inline-block;
-  width: 100%;
+	position: relative;
+	display: inline-block;
+	width: 100%;
 
-  &::before {
-    position: absolute;
-    left: -#{v-size(4, "em")};
-  }
+	&::before {
+		position: absolute;
+		left: -#{v-size(4, "em")};
+	}
 
-  &::after {
-    content: "";
-    position: absolute;
-    left: -#{$codeSpacing};
-    min-height: 100%;
-    width: calc(100% + $codeSpacing * 2);
-    opacity: 15%;
-  }
+	&::after {
+		content: "";
+		position: absolute;
+		left: -#{$codeSpacing};
+		min-height: 100%;
+		width: calc(100% + $codeSpacing * 2);
+		opacity: 15%;
+	}
 }
 .block-code-line.insert {
-  &::before {
-    content: "+";
-  }
-  &::after {
-    background-color: v-color("green");
-  }
+	&::before {
+		content: "+";
+	}
+	&::after {
+		background-color: v-color("green");
+	}
 }
 .block-code-line.delete {
-  &::before {
-    content: "-";
-  }
-  &::after {
-    background-color: v-color("red");
-  }
+	&::before {
+		content: "-";
+	}
+	&::after {
+		background-color: v-color("red");
+	}
 }
 .block-code-token {
-  position: relative;
-  z-index: 1;
-  color: var(--c-code-light);
+	position: relative;
+	z-index: 1;
+	color: var(--c-code-light);
 
-  @include m-dark {
-    color: var(--c-code-dark);
-  }
+	@include m-dark {
+		color: var(--c-code-dark);
+	}
 }
