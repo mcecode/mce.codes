@@ -1,11 +1,11 @@
 import type { RehypePlugin } from "@astrojs/markdown-remark";
-import type { AstroIntegration, AstroUserConfig } from "astro";
+import type { AstroIntegration } from "astro";
 import type { Options as AutolinkHeadingsOptions } from "rehype-autolink-headings";
 import type { Options as ClassNamesOptions } from "rehype-class-names";
 import type { Options as ExternalLinksOptions } from "rehype-external-links";
-import type { FileImporter, Importer, StringOptions } from "sass-embedded";
+import type { FileImporter, Importer } from "sass-embedded";
 import type { ShikiTransformer } from "shiki";
-import type { PluginOption } from "vite";
+import type { PluginOption, SassPreprocessorOptions } from "vite";
 
 import cp from "node:child_process";
 import fs from "node:fs/promises";
@@ -15,6 +15,7 @@ import util from "node:util";
 
 import { rehypeHeadingIds } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
+import { defineConfig } from "astro/config";
 // @ts-expect-error - There's no type declaration but it exists.
 import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
@@ -370,21 +371,7 @@ const importScssJson: Importer<"async"> = {
 	},
 };
 
-/**
- * @see
- * {@link https://vite.dev/config/shared-options.html#css-preprocessoroptions}
- */
-type ViteSassOptions = StringOptions<"async"> & {
-	/**
-	 * Sets which Sass API to use.
-	 */
-	api?: "legacy" | "modern" | "modern-compiler";
-	/**
-	 * Injects code at the top of each stylesheet.
-	 */
-	additionalData?: string;
-};
-const scss: ViteSassOptions = {
+const scss: SassPreprocessorOptions = {
 	api: "modern-compiler",
 	additionalData: partialsImport,
 	importers: [importScssPartials, importScssJson],
@@ -439,8 +426,9 @@ const generateIdsPlugin: PluginOption = {
 	},
 };
 
-export default <AstroUserConfig>{
+export default defineConfig({
 	site: "https://mce.codes",
+	trailingSlash: "never",
 	devToolbar: { enabled: false },
 	compressHTML: false,
 	scopedStyleStrategy: "class",
@@ -468,4 +456,4 @@ export default <AstroUserConfig>{
 		css: { preprocessorOptions: { scss } },
 		plugins: [generateIdsPlugin],
 	},
-};
+});
