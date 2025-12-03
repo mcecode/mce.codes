@@ -1,0 +1,3 @@
+# Reduce risk of installing compromised packages by only installing packages
+# that are at least a week old.
+minimumReleaseAge: 10080

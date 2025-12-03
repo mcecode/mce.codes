@@ -7,6 +7,7 @@
     "preview": "astro build && astro preview"
   },
   "devDependencies": {
+    "@astrojs/markdown-remark": "^6.3.9",
     "@astrojs/mdx": "^4.2.3",
     "@fec/remark-a11y-emoji": "^4.0.2",
     "@rollup/pluginutils": "^5.0.2",
@@ -16,7 +17,7 @@
     "astro": "^5.5.6",
     "astro-compress": "^2.2.15",
     "estree-walker": "^3.0.3",
-    "find-cache-dir": "^5.0.0",
+    "find-cache-directory": "^6.0.0",
     "gifsicle": "^7.0.1",
     "nanoid": "^5.0.6",
     "rehype-autolink-headings": "^7.1.0",
@@ -24,6 +25,8 @@
     "rehype-external-links": "^3.0.0",
     "sass-embedded": "^1.80.7",
     "sharp": "^0.34.3",
-    "ultrahtml": "^1.6.0"
+    "shiki": "^3.15.0",
+    "ultrahtml": "^1.6.0",
+    "vite": "^7.2.4"
   }
 }

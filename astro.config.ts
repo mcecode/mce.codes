@@ -21,7 +21,7 @@ import { addExtension, createFilter, dataToEsm } from "@rollup/pluginutils";
 import { transformerNotationDiff } from "@shikijs/transformers";
 import compress from "astro-compress";
 import { walk as walkJS } from "estree-walker";
-import findCacheDirectory from "find-cache-dir";
+import findCacheDirectory from "find-cache-directory";
 import gifsicle from "gifsicle";
 import { customAlphabet } from "nanoid";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
