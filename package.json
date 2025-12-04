@@ -6,7 +6,8 @@
 		"lint": "prettier --check .",
 		"start": "astro dev",
 		"build": "astro build",
-		"preview": "astro build && astro preview"
+		"preview": "astro build && astro preview",
+		"install-gifsicle-bin": "node node_modules/gifsicle/lib/install.js"
 	},
 	"devDependencies": {
 		"@astrojs/markdown-remark": "^6.3.9",

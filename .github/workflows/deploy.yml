@@ -30,6 +30,7 @@ jobs:
         uses: withastro/action@v5
         with:
           node-version: lts/*
+          build-cmd: pnpm install-gifsicle-bin && pnpm build
 
   deploy:
     needs: build
