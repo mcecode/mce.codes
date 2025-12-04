@@ -87,7 +87,11 @@ function replaceShikiProperty(
 const cssVariablePrefixTransformer: ShikiTransformer = {
 	name: "theme",
 	pre(node) {
-		let style = node.properties.style as string;
+		let style = node.properties.style;
+
+		if (typeof style !== "string") {
+			return;
+		}
 
 		style = replaceShikiProperty(style, "--shiki-light-bg");
 		style = replaceShikiProperty(style, "--shiki-dark-bg");
@@ -98,6 +102,10 @@ const cssVariablePrefixTransformer: ShikiTransformer = {
 	},
 	span(node) {
 		let style = node.properties.style as string;
+
+		if (typeof style !== "string") {
+			return;
+		}
 
 		style = replaceShikiProperty(style, "--shiki-light");
 		style = replaceShikiProperty(style, "--shiki-dark");
