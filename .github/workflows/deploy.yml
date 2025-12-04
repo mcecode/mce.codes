@@ -20,12 +20,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      - name: Cache images
+      - name: Cache media
         uses: actions/cache@v4
         with:
-          path: node_modules/.cache/astro-optimize-images
-          key: image-cache-${{ runner.os }}-${{ hashFiles('**/src/assets/**') }}
-          restore-keys: image-cache-${{ runner.os }}-
+          path: node_modules/.cache/astro-optimize-media
+          key: media-cache-${{ runner.os }}-${{ hashFiles('**/src/assets/**') }}
+          restore-keys: media-cache-${{ runner.os }}
       - name: Install dependencies and build and upload website
         uses: withastro/action@v5
         with:
