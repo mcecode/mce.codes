@@ -30,7 +30,7 @@ $initialLogoMenuWidth: v-size(14);
 
 	// NOTE: The included media query may need to be updated when the number of
 	// nav items is updated.
-	@include m-large {
+	@include m-small {
 		.header {
 			grid-template-columns: 1fr 2fr;
 			justify-items: end;
