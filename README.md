@@ -18,8 +18,9 @@ My personal website, built with [Astro](https://astro.build) and deployed on
 - [`avatar.png`](src/assets/avatar.png) was created by
   [Marga Hernandez](https://margahernandez.framer.website).
 - The menu and mode SVGs used in
-  [`header.astro`](src/components/page/header.astro) were taken and modified
-  from [Tempo's Quill Icons](https://github.com/yourtempo/tempo-quill-icons) and
+  [`header.astro`](src/components/layout/page/header.astro) were taken and
+  modified from
+  [Tempo's Quill Icons](https://github.com/yourtempo/tempo-quill-icons) and
   [Jay Newey's Charm Icons](https://github.com/jaynewey/charm-icons),
   respectively.
 
