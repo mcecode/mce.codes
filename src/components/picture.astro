@@ -3,19 +3,9 @@ import type { ImageMetadata } from "astro";
 
 type Props = {
 	alt: string;
-	class?: string | { picture: string; img: string };
+	class?: string;
 	resize?: "up" | "down";
 } & ImageMetadata;
-
-let pictureClass;
-let imgClass;
-if (typeof Astro.props.class === "string") {
-	pictureClass = Astro.props.class;
-}
-if (typeof Astro.props.class === "object" && Astro.props.class !== null) {
-	pictureClass = Astro.props.class.picture;
-	imgClass = Astro.props.class.img;
-}
 
 const { resize = "" } = Astro.props;
 if (resize === "down") {
@@ -23,16 +13,16 @@ if (resize === "down") {
 	Astro.props.height = Astro.props.height * 0.25;
 }
 
-const { alt, src, width, height } = Astro.props;
+const { alt, src, width, height, class: className } = Astro.props;
 ---
 
-<picture optimize-media optimize-media-resize={resize} class={pictureClass}>
+<picture optimize-media optimize-media-resize={resize} class={className}>
 	<img
 		{src}
 		{alt}
 		{width}
 		{height}
-		class={imgClass}
+		class={className}
 		decoding="async"
 		loading="lazy"
 	/>
