@@ -1,15 +1,23 @@
 ---
-title: "Cheatsheet: PostgreSQL"
+title: "How To: PostgreSQL (Locally)"
 dateCreated: 2025-08-25
-dateUpdated: 2025-08-25
+dateUpdated: 2025-12-08
 ---
 
-This cheatsheet contains the steps I take to set up and interact with
-PostgreSQL, mainly when I'm developing something locally. It documents commands
-and flags that I use but forget when I haven't worked with PostgreSQL in a
-while. The commands below work on Arch Linux so they may need to be modified if
-you want to run them on a different system. They also assume that you're using
-the default host, localhost, and port, 5432.
+## Preamble
+
+### Aims
+
+To document steps, commands, and flags that I primarily do and use when setting
+up and interacting with PostgreSQL locally but forget when I haven't worked with
+it in a while.
+
+### Assumptions
+
+- Arch Linux (btw)
+- Use of the default host, localhost, and port, 5432.
+
+### Caveat
 
 You don't have to go through steps 1-6 every time. You likely only need to go
 through a subset of them depending on your use case:
@@ -164,3 +172,9 @@ through a subset of them depending on your use case:
 - <https://www.postgresql.org/docs/current/app-createuser.html>
 - <https://www.postgresql.org/docs/current/app-createdb.html>
 - <https://www.postgresql.org/docs/current/app-psql.html>
+
+## Changelog
+
+- December 08, 2025
+  - Update title from "Cheatsheet: PostgreSQL" to "How To: PostgreSQL (Locally)"
+  - Break down introductory paragraph into sections
