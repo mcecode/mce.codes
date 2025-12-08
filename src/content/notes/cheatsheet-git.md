@@ -1,13 +1,20 @@
 ---
 title: "Cheatsheet: Git"
 dateCreated: 2024-11-12
-dateUpdated: 2025-08-25
+dateUpdated: 2025-12-08
 ---
 
-This cheatsheet assumes that you're already familiar with Git concepts and know
-the usual `init`, `pull`, `add`, `commit`, `push` flow. It aims to document
-commands and flags that I tend to use but forget when I haven't used them in a
-while.
+## Preamble
+
+### Aims
+
+To document Git commands and flags that I tend to use but forget when I haven't
+used them in a while.
+
+### Assumptions
+
+Familiarity with Git concepts and the usual `init`, `pull`, `add`, `commit`,
+`push` flow.
 
 ## Branching
 
@@ -83,6 +90,12 @@ git branch -D <branch>
 
 ```console
 git stash
+```
+
+Or to stash only a specific file or directory:
+
+```console
+git stash -- <path>
 ```
 
 Or to add a message to remember the stash by:
@@ -277,3 +290,14 @@ git push [<repository>] <local-branch>:<remote-branch>
 - <https://stackoverflow.com/q/927358>
 - <https://stackoverflow.com/q/1085162>
 - <https://stackoverflow.com/q/1186535>
+
+## Changelog
+
+- December 08, 2025
+  - Update "Stash changes" by adding the command to stash only a specific file
+    or directory
+  - Break down introductory paragraph into sections
+- August 25, 2025
+  - Add "Show changes in stash"
+  - Add "Fix rebase conflicts"
+  - Add "Push to a remote branch with a different name"
