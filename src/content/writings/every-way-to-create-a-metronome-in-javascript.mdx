@@ -1,7 +1,7 @@
 ---
 title: Every Way to Create a Metronome in JavaScript
 dateCreated: 2024-06-27
-dateUpdated: 2024-06-27
+dateUpdated: 2025-12-09
 ---
 
 import Picture from "@/components/picture.astro";
@@ -16,7 +16,7 @@ could find and think of to create metronomes in JavaScript using only browser
 APIs", but that wouldn't sound as nice so we're sticking with what we got.
 
 Anyway, much like
-[Grant James](https://grantjam.es/creating-a-simple-metronome-using-javascript-and-the-web-audio-api),
+[Grant James](https://grantjames.github.io/creating-a-simple-metronome-using-javascript-and-the-web-audio-api),
 for one reason or another, I decided that I would make my own metronome and
 thought, "This will be easy!" Oh how wrong we were. Unlike him though, who
 sanely stopped after he was able to make a metronome, I ended up going down that
@@ -50,10 +50,10 @@ setInterval(() => {
 ```
 
 If you've ever read up on how the
-[event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop)
-and [threading](https://developer.mozilla.org/en-US/docs/Glossary/Thread) work
-in JavaScript, you'll know that those methods aren't very accurate because
-before the callback can be called, the
+[event loop](https://javascript.info/event-loop) and
+[threading](https://developer.mozilla.org/en-US/docs/Glossary/Thread) work in
+JavaScript, you'll know that those methods aren't very accurate because before
+the callback can be called, the
 [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread)
 first needs to finish everything that it's queued to handle, which could range
 from adjusting the page layout to handling different events to garbage
@@ -188,8 +188,9 @@ What about running it off the main thread? Will that solve our problems?
 ## Worker Timer
 
 This idea came from
-[Monica Dinculescu's article](https://meowni.ca/posts/metronomes). You can find
-her code [here](https://glitch.com/edit/#!/metronomes).
+[Monica Dinculescu's article](https://meowni.ca/posts/metronomes).
+Unfortunately, I can no longer find any working links to her code as it was
+hosted on [Glitch](https://blog.glitch.com/post/changes-are-coming-to-glitch).
 
 To run a timer off the main thread, we're going to have to use the
 [Web Workers API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API),
@@ -611,3 +612,8 @@ I think that's all I wanted to say on that. Feel free to correct me if I made
 any mistakes, I probably said some inaccurate things here and there. I don't
 have comments on here yet, so you can just
 [file an issue](https://github.com/mcecode/mce.codes/issues) for now.
+
+## Changelog
+
+- December 09, 2025
+  - Update or replace old links and remove broken ones
