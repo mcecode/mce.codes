@@ -1,23 +1,28 @@
 ---
 title: "How To: PostgreSQL (Locally)"
 dateCreated: 2025-08-25
-dateUpdated: 2025-12-08
+dateUpdated: 2025-12-12
 ---
 
 ## Preamble
 
 ### Aims
 
-To document steps, commands, and flags that I primarily do and use when setting
-up and interacting with PostgreSQL locally but forget when I haven't worked with
-it in a while.
+To document steps, commands, and flags that I do and use when I set up and
+interact with PostgreSQL locally for development but forget when I haven't
+worked with it in a while.
+
+This document can be useful for those who want or need to interface with
+PostgreSQL directly through its client and server applications rather than by
+other means such as third-party administration tools or service management
+software.
 
 ### Assumptions
 
 - Arch Linux (btw)
-- Use of the default host, localhost, and port, 5432.
+- Use of PostgreSQL's default host, localhost, and port, 5432
 
-### Caveat
+### Caveats
 
 You don't have to go through steps 1-6 every time. You likely only need to go
 through a subset of them depending on your use case:
@@ -175,6 +180,8 @@ through a subset of them depending on your use case:
 
 ## Changelog
 
+- December 12, 2025
+  - Minor updates and additions to preamble
 - December 08, 2025
   - Update title from "Cheatsheet: PostgreSQL" to "How To: PostgreSQL (Locally)"
   - Break down introductory paragraph into sections
