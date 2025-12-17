@@ -1,7 +1,7 @@
 ---
 title: "How To: OpenBSD (on a Remote Server)"
 dateCreated: 2025-12-12
-dateUpdated: 2025-12-12
+dateUpdated: 2025-12-17
 ---
 
 ## Preamble
@@ -24,13 +24,14 @@ configuration and activity.
 ### Caveats
 
 I'm pretty new to OpenBSD and system administration in general, so there may be
-errors in this document. You should consider this as a resource, not the be-all
-and end-all of all the steps you should take to set up an OpenBSD server.
+errors in this document. You should consider this a resource, not the be-all and
+end-all of what you should do to set up an OpenBSD server. When in doubt, the
+official FAQ and man pages referenced below are your friends.
 
 Additionally, this skips installation, disk partitioning, network setup, etc.
 since the server provider I use supports OpenBSD out of the box and already
-handles those things when spinning up new instances. If you need them, some of
-my references below discuss those steps.
+handles those things when spinning up new instances. If you need them, some
+resources referenced below discuss those steps.
 
 ## Steps
 
@@ -153,7 +154,7 @@ my references below discuss those steps.
     rcctl configtest sshd
     ```
 
-14. (Remote as root) Restart SSH daemon:
+14. (Remote as root) Reload SSH daemon:
 
     ```console
     rcctl reload sshd
@@ -285,3 +286,9 @@ my references below discuss those steps.
 - <https://man.openbsd.org/ssh_config.5>
 - <https://man.openbsd.org/pf.conf.5>
 - <https://man.openbsd.org/pfctl.8>
+
+## Changelog
+
+- December 17, 2025
+  - Minor updates to caveats
+  - Change "restart" to "reload" in step 14
