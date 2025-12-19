@@ -14,13 +14,12 @@ article {
 	}
 
 	ul > li {
+		margin-left: v-size(4, "em");
 		list-style-type: circle;
 	}
 	ol > li {
-		list-style-type: decimal;
-	}
-	li {
-		margin-left: v-size(4, "em");
+		margin-left: v-size(8, "em");
+		list-style-type: decimal-leading-zero;
 	}
 
 	a:has(picture),
