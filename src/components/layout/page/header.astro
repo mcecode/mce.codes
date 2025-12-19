@@ -112,6 +112,12 @@ import {
 	import Store from "@/lib/store.ts";
 	import { colors } from "@/styles/data/colors.json";
 
+	// Check for ES2022 support since latest feature used in this script is static
+	// class fields.
+	if (typeof Object.hasOwn === "function") {
+		document.documentElement.className = "js";
+	}
+
 	const header = document.getElementById(headerId) as HTMLElement;
 
 	header.append(
