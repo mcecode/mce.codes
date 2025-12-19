@@ -69,6 +69,7 @@ h3 a {
 	padding: v-size(1, "em") v-size(2, "em");
 	border-radius: 6px;
 	background-color: var(--c-accent-2);
+	word-break: break-word;
 }
 
 $codeSpacing: v-size(6, "em");
