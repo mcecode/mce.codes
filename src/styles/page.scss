@@ -28,6 +28,7 @@ html {
 	height: 100%;
 	background-color: var(--c-background);
 	color: var(--c-foreground);
+	text-size-adjust: none;
 }
 body {
 	display: flex;

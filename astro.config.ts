@@ -25,6 +25,7 @@ import { walk as walkJS } from "estree-walker";
 import findCacheDirectory from "find-cache-directory";
 import gifsicle from "gifsicle";
 import { customAlphabet } from "nanoid";
+import postcssPresetPlugin from "postcss-preset-env";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeClassNames from "rehype-class-names";
 import rehypeExternalLinks from "rehype-external-links";
@@ -461,7 +462,11 @@ export default defineConfig({
 	},
 	integrations: [mdx(), optimizeMediaIntegration, compress({ Image: false })],
 	vite: {
-		css: { preprocessorOptions: { scss } },
+		build: { minify: false },
+		css: {
+			preprocessorOptions: { scss },
+			postcss: { plugins: [postcssPresetPlugin()] },
+		},
 		plugins: [generateIdsPlugin],
 	},
 });

@@ -23,6 +23,7 @@
 		"find-cache-directory": "^6.0.0",
 		"gifsicle": "^7.0.1",
 		"nanoid": "^5.1.6",
+		"postcss-preset-env": "^10.5.0",
 		"prettier": "^3.7.4",
 		"prettier-plugin-astro": "^0.14.1",
 		"rehype-autolink-headings": "^7.1.0",
