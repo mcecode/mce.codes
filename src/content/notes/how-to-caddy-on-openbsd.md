@@ -1,7 +1,7 @@
 ---
 title: "How To: Caddy (on OpenBSD)"
 dateCreated: 2025-12-17
-dateUpdated: 2025-12-17
+dateUpdated: 2025-12-23
 ---
 
 ## Preamble
@@ -72,8 +72,8 @@ relayd, so you might not even want to use Caddy on OpenBSD to begin with.
    ```
 
    **Note:** These are only example commands, maybe you want to transfer the
-   files using rsync or you may want to automate the whole thing via CI/CD, you
-   do you.
+   files using rsync, automate the whole thing with CI/CD, or manually place the
+   files via sneakernet, you do you.
 
 3. Create log directory for Caddy:
 
@@ -90,7 +90,7 @@ relayd, so you might not even want to use Caddy on OpenBSD to begin with.
 5. Support `configtest` action:
 
    ```console
-   doas vi `/etc/rc.d/caddy`
+   doas vi /etc/rc.d/caddy
    ```
 
    Then, add the following before the `rc_start` function:
@@ -259,3 +259,9 @@ relayd, so you might not even want to use Caddy on OpenBSD to begin with.
 - <https://man.openbsd.org/pf.conf.5>
 - <https://fabiolb.net/faq/binding-to-low-ports/#openbsdfreebsdnetbsd>
 - <https://man.openbsd.org/pfctl.8>
+
+## Changelog
+
+- December 23, 2025
+  - Minor update to step 2 note
+  - Fix step 5 command
