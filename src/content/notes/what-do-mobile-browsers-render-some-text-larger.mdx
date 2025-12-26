@@ -1,0 +1,69 @@
+---
+title: "What Do: Mobile Browsers Render Some Text Larger"
+dateCreated: 2025-12-26
+dateUpdated: 2025-12-26
+---
+
+import Picture from "@/components/picture.astro";
+
+import largeTextOnMobileJpg from "@/assets/large-text-on-mobile.jpg";
+
+Given the following situation on mobile where certain text are rendered larger
+than the font size you've set:
+
+<Picture
+	alt="One code block being rendered with significantly larger text compared to another code block."
+	{...largeTextOnMobileJpg}
+/>
+
+What do if you want consistent font size rendering on all platforms?
+
+Disable any text inflation algorithms being applied by browsers:
+
+```css
+html {
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+```
+
+**Note:** Some ancient WebKit-based browsers, specifically Chrome 27 and Safari
+6 or older, had a bug where they prevented zooming in and out if
+`-webkit-text-size-adjust` is set to `none`. Realistically, practically nobody
+uses these browsers anymore, but if you want to cover all of your bases, setting
+`-webkit-text-size-adjust` to `100%` instead of `none` has the same effect.
+
+## Additional Information
+
+Since web browsing was initially a desktop only thing mobile browsers
+implemented ways to make websites designed for desktops to work on mobile. This
+included enlarging certain text using text inflation algorithms.
+
+In my specific case, this text enlargement was going awry on this website's code
+blocks when they reached a certain horizontal length. Interestingly, it only
+happened on iOS Safari and not on Android Chrome. This leads me to believe that
+this might be a bug in Safari. Particularly, because this website sets the
+`content` of `<meta name="viewport">` to
+`width=device-width, initial-scale=1.0`, which should tell browsers that they
+don't need to do any weird text scaling since this website is already built with
+different device sizes in mind. I couldn't pinpoint exactly what conditions are
+needed to manifest this, but during my testing, it seems it has to do with the
+following structure where a parent set to `display` `inline-block` has a child
+set to `position` `relative` that's displaying monospace text of a certain size
+and length:
+
+```html
+<pre style="display: inline-block">
+<code style="position: relative">Some long text here...</code>
+</pre>
+```
+
+I'm not sure how accurate this is, but for now, that's as far as I got and am
+willing to go to investigate it.
+
+## References
+
+- https://stackoverflow.com/q/3226001
+- https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/text-size-adjust
+- https://caniuse.com/text-size-adjust
+- https://bugs.webkit.org/show_bug.cgi?id=56543

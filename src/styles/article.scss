@@ -9,7 +9,7 @@ article {
 	p,
 	ul,
 	pre,
-	a:has(picture) {
+	picture {
 		margin-bottom: v-size(6, "em");
 	}
 
